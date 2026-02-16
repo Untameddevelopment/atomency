@@ -1,0 +1,114 @@
+body {
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+.canvas-bg {
+    background-image: 
+        radial-gradient(circle at 2px 2px, rgba(255,255,255,0.10) 1px, transparent 0);
+    background-size: 40px 40px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
+
+.electron-orbit {
+    animation: rotate var(--duration, 3s) linear infinite;
+    transform-origin: center;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.atom-group {
+    transition: transform 0.1s ease-out;
+}
+
+.periodic-item {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.panel-section {
+    margin-bottom: 2rem;
+}
+
+.panel-title {
+    font-size: 10px;
+    font-weight: 900;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+}
+
+.control-btn {
+    flex: 1;
+    padding: 0.5rem 0;
+    border-radius: 0.5rem;
+    border: 1px solid #334155;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+}
+
+.control-btn.active {
+    background-color: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    color: #818cf8;
+}
+
+.control-btn:not(.active) {
+    background-color: rgba(30, 41, 59, 0.4);
+    color: #64748b;
+}
+
+.control-btn:not(.active):hover {
+    background-color: rgba(51, 65, 85, 0.5);
+}
+
+.bond-line {
+    transition: all 0.3s ease;
+}
+
+.electron-dot {
+    /* filter: drop-shadow(0 0 3px #60a5fa); */
+}
+
+@keyframes vacuum-effect {
+    0% { 
+        transform: translate(var(--start-x), var(--start-y)) scale(1) rotate(0deg); 
+        opacity: 1; 
+    }
+    100% { 
+        transform: translate(var(--center-x), var(--center-y)) scale(0) rotate(1080deg); 
+        opacity: 0; 
+    }
+}
+
+.vacuum-animate {
+    animation: vacuum-effect 0.8s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}

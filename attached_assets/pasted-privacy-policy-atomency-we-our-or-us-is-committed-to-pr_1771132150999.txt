@@ -1,0 +1,123 @@
+PRIVACY POLICY
+
+Atomency ("we," "our," or "us") is committed to protecting the privacy of students, teachers, and educational institutions. This Privacy Policy explains how we collect, use, disclose, and safeguard information in connection with our educational chemistry platform.
+
+Effective Date: February 15, 2026
+
+1. FERPA COMPLIANCE
+
+Atomency operates in compliance with the Family Educational Rights and Privacy Act (20 U.S.C. § 1232g; 34 CFR Part 99).
+
+We do not collect, maintain, or disclose student education records as defined by FERPA. Our platform:
+- Does not require student login or account creation
+- Does not store student personal information
+- Does not track individual student activity or progress
+- Does not maintain records that would constitute education records under FERPA
+
+All molecular modeling activities occur client-side in the user's browser. No student work, calculations, or molecular structures are transmitted to or stored on our servers.
+
+2. INFORMATION WE DO NOT COLLECT
+
+We explicitly do NOT collect:
+- Student names, addresses, or contact information
+- Student ID numbers or demographic data
+- Grades, test scores, or academic performance data
+- Behavioral records or disciplinary information
+- Individual usage patterns or browsing history
+- IP addresses linked to specific student sessions
+- Cookies or tracking technologies for individual identification
+
+3. LIMITED DATA COLLECTION
+
+Atomency operates as a serverless static application. We collect only:
+
+Anonymous Aggregate Data:
+- Total page views (without user identification)
+- General feature usage statistics (e.g., "export function used X times")
+- Browser type and version (for compatibility improvements)
+- Anonymous error reports for debugging
+
+This data cannot be linked to any individual student or teacher and is used solely for technical maintenance and platform improvement.
+
+4. LOCAL STORAGE
+
+All user-generated content (molecular structures, exported files, canvas states) is stored:
+- Exclusively in the user's browser localStorage
+- On the user's local device
+- Never transmitted to external servers
+
+Users may clear this data at any time through browser settings. We cannot access, retrieve, or delete user-generated content stored locally.
+
+5. THIRD-PARTY SERVICES
+
+Atomency integrates with the following services:
+
+Netlify (Hosting):
+- Provides static file hosting and CDN distribution
+- May collect standard server logs (IP addresses, timestamps)
+- Data retention: Per Netlify's privacy policy
+- FERPA compliance: Netlify acts as a service provider with no access to educational content
+
+No other third-party analytics, advertising, or tracking services are utilized.
+
+6. DATA SECURITY
+
+We implement industry-standard security measures:
+- HTTPS/TLS encryption for all data transmission
+- Content Security Policy (CSP) headers
+- No server-side processing of user molecular data
+- Regular security updates and dependency audits
+
+7. CHILDREN'S PRIVACY (COPPA)
+
+Atomency is designed for educational use by students aged 13 and older in high school chemistry courses. We do not knowingly collect personal information from children under 13. If you believe we have inadvertently collected such information, contact us immediately for deletion.
+
+8. RIGHTS OF PARENTS AND STUDENTS
+
+Under FERPA, parents and eligible students have the right to:
+- Inspect and review education records (not applicable to Atomency as we maintain no such records)
+- Request amendment of education records (not applicable)
+- Consent to disclosures of personally identifiable information (not required as we collect none)
+- File complaints with the U.S. Department of Education
+
+For FERPA complaints, contact:
+Family Policy Compliance Office
+U.S. Department of Education
+400 Maryland Avenue, SW
+Washington, D.C. 20202
+
+9. DISTRICT AND INSTITUTIONAL COMPLIANCE
+
+For school districts and educational institutions:
+
+Atomency may be used without signing a formal Data Privacy Agreement, as we:
+- Do not process student personal information
+- Do not require access to student information systems
+- Do not integrate with Student Information Systems (SIS)
+- Do not store data on district students
+
+District IT administrators may whitelist Atomency for classroom use with confidence that no student data will leave the district network or be stored externally.
+
+10. CHANGES TO THIS POLICY
+
+We may update this Privacy Policy periodically. Changes will be posted on this page with an updated effective date. Continued use of Atomency after changes constitutes acceptance.
+
+11. CONTACT INFORMATION
+
+For privacy questions, FERPA compliance inquiries, or data concerns:
+
+Ky'Lin Spears
+Developer, Atomency
+[Contact information to be added]
+
+12. ATTRIBUTION
+
+This Privacy Policy was drafted to ensure compliance with:
+- Family Educational Rights and Privacy Act (FERPA), 20 U.S.C. § 1232g
+- Children's Online Privacy Protection Act (COPPA), 15 U.S.C. § 6501
+- Maryland Student Data Privacy Act (if applicable)
+- Prince George's County Public Schools Data Privacy Guidelines
+
+---
+
+By using Atomency, you acknowledge that you have read and understood this Privacy Policy and agree to its terms.

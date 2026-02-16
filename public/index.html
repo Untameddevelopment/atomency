@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atomency - Interactive Chemistry Tool</title>
+    <meta name="description" content="Interactive periodic table and molecular builder with 110M+ molecular structures. Built for K-12 chemistry education.">
+    <meta name="keywords" content="chemistry, periodic table, molecules, education, interactive, STEM">
+    <meta name="author" content="Ky'lin Spears">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Atomency - Interactive Chemistry Tool">
+    <meta property="og:description" content="Explore 118 elements and build molecules with an interactive chemistry tool built for students.">
+    <meta property="og:type" content="website">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="logo.svg">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Atomency">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.svg">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <!-- Font: Inter + JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (fallback for some icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!-- Tailwind Config Override -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#6366f1",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#050a14",
+                        "canvas-dark": "#020617",
+                        "surface-dark": "rgba(15, 23, 42, 0.7)",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                },
+            },
+        };
+    </script>
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/alchemist-style.css">
+    <style>
+        body { overflow: hidden; background-color: #050a14; }
+        .canvas-grid { background-image: radial-gradient(circle, rgba(255,255,255,0.10) 1px, transparent 1px); background-size: 40px 40px; }
+        .glow-atom { box-shadow: 0 0 25px rgba(99, 102, 241, 0.3); }
+        .molecule-orb { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1)); transition: transform 0.3s ease; }
+        .molecule-orb:hover { transform: scale(1.05); }
+        .sidebar-transition { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); will-change: width; contain: layout; }
+        .hud-blur { backdrop-filter: blur(12px); }
+        .material-icons-round { font-family: 'Material Icons Round'; font-weight: normal; font-style: normal; font-size: 24px; display: inline-block; line-height: 1; text-transform: none; letter-spacing: normal; word-wrap: normal; white-space: nowrap; direction: ltr; }
+    </style>
+</head>
+<body class="bg-background-dark text-slate-100 antialiased font-sans">
+    <div class="relative h-screen w-screen flex overflow-hidden">
+
+        <!-- LEFT SIDEBAR: Collapsible w-16 to w-64 on hover -->
+        <aside id="left-sidebar" class="group fixed left-0 top-0 sidebar-transition w-16 hover:w-64 h-full bg-slate-900/80 border-r border-slate-800 z-50 flex flex-col items-center py-6 hud-blur">
+            <div class="mb-10 px-4 w-full flex items-center overflow-hidden">
+                <div class="bg-primary p-2 rounded-lg flex-shrink-0">
+                    <span class="material-icons-round text-white text-xl">science</span>
+                </div>
+                <span class="ml-4 font-bold text-lg tracking-tight whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">ATOMENCY</span>
+            </div>
+            <nav class="flex-1 w-full space-y-4 px-3">
+                <button onclick="showPage('home')" class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
+                    <span class="material-icons-round text-lg">table_chart</span>
+                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Table</span>
+                </button>
+                <button onclick="showPage('simulator')" class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
+                    <span class="material-icons-round text-lg">science</span>
+                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Lab</span>
+                </button>
+                <button class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
+                    <span class="material-icons-round text-lg">category</span>
+                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Elements</span>
+                </button>
+                <button onclick="showPage('reactions')" class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
+                    <span class="material-icons-round text-lg">bolt</span>
+                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Reactions</span>
+                </button>
+                <button onclick="showPage('nuclear')" class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
+                    <span class="material-icons-round text-lg">radio_button_checked</span>
+                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Nuclear</span>
+                </button>
+                <button class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
+                    <span class="material-icons-round text-lg">data_usage</span>
+                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Analysis</span>
+                </button>
+            </nav>
+            <div class="w-full px-3 pt-6 border-t border-slate-800">
+                <button class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
+                    <span class="material-icons-round text-lg">settings</span>
+                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Settings</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-1 flex flex-col overflow-hidden ml-16">
+
+            <!-- TOP NAVIGATION (Periodic Table mode) -->
+            <nav id="top-nav-home" class="border-b border-slate-700 bg-slate-900/95 backdrop-blur sticky top-0 z-40 h-14 hidden">
+                <div class="container mx-auto px-4 h-full flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="font-black tracking-tighter text-lg italic uppercase">Atom<span class="text-blue-500">ency</span></span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="showHelpModal()" class="p-2 hover:bg-slate-800 rounded-lg transition-colors" title="Help & Shortcuts">
+                            <span class="material-icons-round text-lg">help</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- MAIN CANVAS AREA (Lab/Simulator mode) -->
+            <main id="simulator-page" class="flex-1 relative bg-canvas-dark canvas-grid overflow-hidden">
+                <!-- TOP HUD BAR - Centered Pill -->
+                <div class="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 p-1 px-4 bg-slate-900/60 border border-slate-700/50 rounded-full hud-blur shadow-2xl z-40">
+                    <div class="flex items-center gap-4 px-2 py-1">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span class="text-xs font-mono uppercase tracking-widest text-slate-500">Atoms:</span>
+                            <span class="font-bold text-sm text-slate-100" id="stat-atoms">0</span>
+                        </div>
+                        <div class="h-4 w-[1px] bg-slate-700"></div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                            <span class="text-xs font-mono uppercase tracking-widest text-slate-500">Bonds:</span>
+                            <span class="font-bold text-sm text-slate-100" id="stat-bonds">0</span>
+                        </div>
+                        <div class="h-4 w-[1px] bg-slate-700"></div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons-round text-sm text-slate-500">zoom_in</span>
+                            <span class="font-bold text-sm text-slate-100" id="stat-zoom">100%</span>
+                        </div>
+                    </div>
+                    <button onclick="window.optimizeGeometry()" class="bg-primary text-white p-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-tight hover:brightness-110 transition-all flex items-center gap-1.5" title="Snap atoms to correct VSEPR molecular geometry">
+                        <span class="material-icons-round text-xs">auto_fix_high</span>
+                        VSEPR Snap
+                    </button>
+                </div>
+
+                <!-- SVG Canvas -->
+                <svg id="canvas" class="w-full h-full">
+                    <defs>
+                        <radialGradient id="selection-glow">
+                            <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.4" />
+                            <stop offset="100%" stop-color="#4f46e5" stop-opacity="0" />
+                        </radialGradient>
+                        <radialGradient id="lp-cloud">
+                            <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.55" />
+                            <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.2" />
+                            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+                        </radialGradient>
+                        <filter id="lp-blur">
+                            <feGaussianBlur stdDeviation="3" result="b" />
+                            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <g id="bonds-layer"></g>
+                    <g id="vsepr-layer"></g>
+                    <g id="atoms-layer"></g>
+                </svg>
+
+                <!-- BOTTOM LEFT: Molecular formula display -->
+                <div class="absolute bottom-10 left-6 z-20">
+                    <div id="formula-display" class="text-center">
+                        <div class="text-3xl font-mono font-bold text-slate-100 mb-2" id="molecule-formula">—</div>
+                        <div class="text-xs font-mono uppercase tracking-widest text-slate-500" id="molecule-name">No molecule selected</div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM RIGHT: Temperature/Pressure control panel with glassmorphism -->
+                <div id="controls-panel" class="absolute bottom-10 right-6 w-72 bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 hud-blur shadow-2xl z-20 transition-opacity duration-200">
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Temperature</label>
+                                <span id="val-temp" class="text-[10px] font-bold text-orange-400">298 K</span>
+                            </div>
+                            <input type="range" id="slider-temp" min="100" max="3000" value="298" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-500">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Pressure</label>
+                                <span id="val-press" class="text-[10px] font-bold text-blue-400">1.0 atm</span>
+                            </div>
+                            <input type="range" id="slider-press" min="0.1" max="100" step="0.1" value="1.0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                        </div>
+                        <div class="pt-2 border-t border-slate-700 space-y-2">
+                            <button id="btn-infuse" class="w-full py-2 bg-primary hover:bg-indigo-500 text-white font-black rounded-lg text-xs uppercase tracking-tight transition-all active:scale-95">
+                                <span class="material-icons-round text-sm align-middle">add</span> Add Element
+                            </button>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button id="btn-import" onclick="importMolecules()" class="py-2 bg-blue-600/80 hover:bg-blue-500 text-white font-bold rounded-lg text-xs uppercase tracking-tight transition-all active:scale-95 flex items-center justify-center gap-1 border border-blue-500/30">
+                                    <span class="material-icons-round text-sm">file_upload</span> Import
+                                </button>
+                                <button id="btn-export" onclick="exportMolecule()" class="py-2 bg-emerald-600/80 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs uppercase tracking-tight transition-all active:scale-95 flex items-center justify-center gap-1 border border-emerald-500/30">
+                                    <span class="material-icons-round text-sm">file_download</span> Export
+                                </button>
+                            </div>
+                            <button id="btn-reset" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 font-bold rounded-lg transition-all active:scale-95 text-xs uppercase border border-slate-700/50">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INSPECTOR PANEL (slides in from right when atom/molecule selected) -->
+                <div id="inspector-panel" class="absolute top-0 right-0 w-80 bottom-8 bg-slate-900/80 border-l border-b border-slate-700/50 rounded-bl-2xl z-30 hud-blur shadow-2xl transition-transform duration-300 ease-in-out translate-x-full">
+                    <div class="h-full flex flex-col">
+                        <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-slate-700/50 shrink-0">
+                            <h2 class="text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent">Inspector</h2>
+                            <button onclick="closeInspector()" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors text-lg">&times;</button>
+                        </div>
+                        <div id="inspector" class="flex-1 overflow-auto p-4 space-y-4 custom-scrollbar">
+                            <div class="text-center text-slate-600 text-[10px] italic py-20">Select an atom or molecule to inspect properties</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- REACTION KINETICS PAGE -->
+            <main id="reactions-page" class="flex-1 flex overflow-hidden hidden">
+                <!-- LEFT: Particle simulation canvas -->
+                <div class="flex-1 flex flex-col relative bg-[#0a0f1a]">
+                    <!-- Top bar -->
+                    <div class="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
+                        <div class="flex items-center gap-2 px-4 py-2 bg-slate-900/70 border border-slate-700/50 rounded-full hud-blur">
+                            <span class="material-icons-round text-primary text-sm">bolt</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Reaction Kinetics</span>
+                            <div class="h-3 w-px bg-slate-700 mx-1"></div>
+                            <span class="text-[9px] font-mono text-slate-500">NGSS HS-PS1-5 / HS-PS1-6</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="rk-play-btn" class="flex items-center gap-1 px-4 py-2 bg-primary hover:bg-indigo-500 text-white font-black rounded-full text-xs uppercase tracking-tight transition-all active:scale-95">
+                                <span class="material-icons-round text-sm">play_arrow</span> Start
+                            </button>
+                            <button id="rk-reset-btn" class="flex items-center gap-1 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 font-bold rounded-full text-xs uppercase tracking-tight transition-all active:scale-95 border border-slate-700/50">
+                                <span class="material-icons-round text-sm">refresh</span> Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Particle canvas -->
+                    <div class="flex-1 relative">
+                        <canvas id="rk-particle-canvas" class="absolute inset-0 w-full h-full"></canvas>
+                    </div>
+
+                    <!-- Bottom HUD stats -->
+                    <div class="absolute bottom-10 left-4 right-4 z-10 flex items-center justify-center gap-6 px-4 py-2 bg-slate-900/70 border border-slate-700/50 rounded-full hud-blur mx-auto w-fit">
+                        <div class="text-center">
+                            <div class="text-[8px] font-black text-slate-500 uppercase">Collisions</div>
+                            <div class="text-sm font-black text-blue-400" id="rk-stat-collisions">0</div>
+                        </div>
+                        <div class="h-5 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-[8px] font-black text-slate-500 uppercase">Reactions</div>
+                            <div class="text-sm font-black text-emerald-400" id="rk-stat-reactions">0</div>
+                        </div>
+                        <div class="h-5 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-[8px] font-black text-slate-500 uppercase">P(react)</div>
+                            <div class="text-sm font-black text-amber-400" id="rk-stat-probability">0%</div>
+                        </div>
+                        <div class="h-5 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-[8px] font-black text-slate-500 uppercase">Speed</div>
+                            <div class="text-sm font-black text-orange-400" id="rk-stat-speed">0 u</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Controls panel -->
+                <div class="w-80 bg-slate-900/80 border-l border-slate-700/50 hud-blur overflow-y-auto custom-scrollbar flex flex-col">
+                    <div class="p-4 space-y-4">
+                        <!-- Reaction selector -->
+                        <div>
+                            <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Reaction Type</div>
+                            <div id="rk-reaction-selector" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+
+                        <!-- Temperature control -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Temperature</label>
+                                <span id="rk-temp-val" class="text-[10px] font-bold text-orange-400">298 K</span>
+                            </div>
+                            <input type="range" id="rk-temp-slider" min="100" max="2000" value="298" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-500">
+                            <div class="text-[8px] text-slate-600">Higher T → faster particles → more collisions → higher rate</div>
+                        </div>
+
+                        <!-- Concentration A -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Concentration [A]</label>
+                                <span id="rk-conc-a-val" class="text-[10px] font-bold text-red-400">50</span>
+                            </div>
+                            <input type="range" id="rk-conc-a-slider" min="5" max="120" value="50" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-500">
+                        </div>
+
+                        <!-- Concentration B -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Concentration [B]</label>
+                                <span id="rk-conc-b-val" class="text-[10px] font-bold text-blue-400">50</span>
+                            </div>
+                            <input type="range" id="rk-conc-b-slider" min="5" max="120" value="50" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                            <div class="text-[8px] text-slate-600">More reactant particles → more collisions → higher rate</div>
+                        </div>
+
+                        <!-- Catalyst toggle -->
+                        <div>
+                            <button id="rk-catalyst-btn" class="w-full py-2 bg-slate-800/50 hover:bg-slate-800 text-slate-400 font-bold rounded-lg text-xs uppercase tracking-tight transition-all active:scale-95 border border-slate-700/50">
+                                Catalyst: OFF
+                            </button>
+                            <div class="text-[8px] text-slate-600 mt-1">Catalyst lowers activation energy without being consumed</div>
+                        </div>
+
+                        <!-- Energy Diagram -->
+                        <div>
+                            <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Energy Diagram</div>
+                            <div id="rk-energy-diagram" class="w-full aspect-[16/10] bg-slate-800/30 rounded-lg border border-slate-700/30 overflow-hidden"></div>
+                        </div>
+
+                        <!-- Rate Graph -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Reaction Rate</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-0.5 bg-emerald-400 rounded"></span><span class="text-[8px] text-slate-500">Reactions</span>
+                                    <span class="w-2 h-0.5 bg-blue-400/40 rounded"></span><span class="text-[8px] text-slate-500">Collisions</span>
+                                </div>
+                            </div>
+                            <canvas id="rk-rate-canvas" width="300" height="80" class="w-full rounded-lg border border-slate-700/30"></canvas>
+                        </div>
+
+                        <!-- Equilibrium -->
+                        <div>
+                            <div id="rk-equilibrium" class="w-full"></div>
+                        </div>
+
+                        <!-- NGSS alignment note -->
+                        <div class="bg-indigo-500/5 border border-indigo-500/20 rounded-lg p-3 mt-2">
+                            <div class="text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1">NGSS Alignment</div>
+                            <div class="text-[9px] text-slate-400 leading-relaxed">
+                                <strong>HS-PS1-5:</strong> Effects of temperature and concentration on reaction rate<br>
+                                <strong>HS-PS1-6:</strong> Refining conditions to increase products at equilibrium (Le Chatelier's principle)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- NUCLEAR DECAY SIMULATOR PAGE -->
+            <main id="nuclear-page" class="flex-1 flex overflow-hidden hidden">
+                <!-- LEFT: Nucleus visualization canvas -->
+                <div class="flex-1 flex flex-col relative bg-[#0a0f1a]">
+                    <!-- Top bar -->
+                    <div class="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
+                        <div class="flex items-center gap-2 px-4 py-2 bg-slate-900/70 border border-slate-700/50 rounded-full hud-blur">
+                            <span class="material-icons-round text-amber-400 text-sm">radio_button_checked</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Nuclear Decay</span>
+                            <div class="h-3 w-px bg-slate-700 mx-1"></div>
+                            <span class="text-[9px] font-mono text-slate-500">NGSS HS-PS1-8</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="nd-step-btn" class="flex items-center gap-1 px-4 py-2 bg-primary hover:bg-indigo-500 text-white font-black rounded-full text-xs uppercase tracking-tight transition-all active:scale-95">
+                                <span class="material-icons-round text-sm">play_arrow</span> Decay Step
+                            </button>
+                            <button id="nd-auto-btn" class="flex items-center gap-1 px-3 py-2 bg-emerald-600/80 hover:bg-emerald-500 text-white font-bold rounded-full text-xs uppercase tracking-tight transition-all active:scale-95 border border-emerald-500/30">
+                                <span class="material-icons-round text-sm">fast_forward</span> Auto-Play
+                            </button>
+                            <button id="nd-reset-btn" class="flex items-center gap-1 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 font-bold rounded-full text-xs uppercase tracking-tight transition-all active:scale-95 border border-slate-700/50">
+                                <span class="material-icons-round text-sm">refresh</span> Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Nucleus canvas -->
+                    <div class="flex-1 relative">
+                        <canvas id="nd-canvas" class="absolute inset-0 w-full h-full"></canvas>
+                    </div>
+
+                    <!-- Bottom HUD stats -->
+                    <div class="absolute bottom-10 left-4 right-4 z-10 flex items-center justify-center gap-6 px-4 py-2 bg-slate-900/70 border border-slate-700/50 rounded-full hud-blur mx-auto w-fit">
+                        <div class="text-center">
+                            <div class="text-[8px] font-black text-slate-500 uppercase">Protons (Z)</div>
+                            <div class="text-sm font-black text-red-400" id="nd-stat-z">92</div>
+                        </div>
+                        <div class="h-5 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-[8px] font-black text-slate-500 uppercase">Neutrons (N)</div>
+                            <div class="text-sm font-black text-blue-400" id="nd-stat-n">146</div>
+                        </div>
+                        <div class="h-5 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-[8px] font-black text-slate-500 uppercase">Mass (A)</div>
+                            <div class="text-sm font-black text-slate-200" id="nd-stat-a">238</div>
+                        </div>
+                        <div class="h-5 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-[8px] font-black text-slate-500 uppercase">Half-Life</div>
+                            <div class="text-sm font-black text-amber-400" id="nd-stat-halflife">4.5 Gyr</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Controls panel -->
+                <div class="w-80 bg-slate-900/80 border-l border-slate-700/50 hud-blur overflow-y-auto custom-scrollbar flex flex-col">
+                    <div class="p-4 space-y-4">
+                        <!-- Preset isotopes -->
+                        <div>
+                            <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Select Isotope</div>
+                            <div id="nd-presets" class="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto custom-scrollbar"></div>
+                        </div>
+
+                        <!-- Custom isotope input -->
+                        <div class="border-t border-slate-700/50 pt-3">
+                            <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Custom Isotope</div>
+                            <div class="flex gap-2 items-end">
+                                <div class="flex-1">
+                                    <label class="text-[8px] text-slate-500 block mb-0.5">Z (Protons)</label>
+                                    <input type="number" id="nd-z-input" min="1" max="118" value="92" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[8px] text-slate-500 block mb-0.5">A (Mass)</label>
+                                    <input type="number" id="nd-a-input" min="1" max="300" value="238" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                                </div>
+                                <button id="nd-load-btn" class="px-3 py-1.5 bg-primary hover:bg-indigo-500 text-white font-bold rounded-lg text-xs transition-all active:scale-95">
+                                    Load
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Nuclear Equation Display -->
+                        <div class="border-t border-slate-700/50 pt-3">
+                            <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Nuclear Equation</div>
+                            <div id="nd-equation">
+                                <div class="text-slate-600 text-xs text-center py-4 italic">Perform a decay to see the equation</div>
+                            </div>
+                        </div>
+
+                        <!-- Decay Chain -->
+                        <div class="border-t border-slate-700/50 pt-3">
+                            <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Decay Chain</div>
+                            <div id="nd-chain" class="max-h-64 overflow-y-auto custom-scrollbar"></div>
+                        </div>
+
+                        <!-- NGSS alignment note -->
+                        <div class="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3 mt-2">
+                            <div class="text-[8px] font-black text-amber-400 uppercase tracking-widest mb-1">NGSS Alignment</div>
+                            <div class="text-[9px] text-slate-400 leading-relaxed">
+                                <strong>HS-PS1-8:</strong> Develop models to illustrate the changes in the composition of the nucleus of the atom and the energy released during the processes of fission, fusion, and radioactive decay.
+                            </div>
+                        </div>
+
+                        <!-- Decay type reference -->
+                        <div class="bg-slate-800/30 border border-slate-700/30 rounded-lg p-3">
+                            <div class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-2">Decay Types Reference</div>
+                            <div class="space-y-1.5 text-[9px]">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                                    <span class="text-red-400 font-bold">α Alpha</span>
+                                    <span class="text-slate-500">Z−2, A−4 (emits ⁴He)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-green-400"></span>
+                                    <span class="text-green-400 font-bold">β⁻ Beta-minus</span>
+                                    <span class="text-slate-500">Z+1, A same (n→p+e⁻)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+                                    <span class="text-orange-400 font-bold">β⁺ Beta-plus</span>
+                                    <span class="text-slate-500">Z−1, A same (p→n+e⁺)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                                    <span class="text-purple-400 font-bold">EC Electron Capture</span>
+                                    <span class="text-slate-500">Z−1, A same</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+                                    <span class="text-yellow-400 font-bold">γ Gamma</span>
+                                    <span class="text-slate-500">No Z/A change (energy)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- PERIODIC TABLE MODE -->
+            <main id="home-page" class="flex-1 flex flex-col px-4 py-4 hidden">
+                <div class="max-w-4xl mx-auto mb-2 text-center shrink-0">
+                    <h1 class="text-2xl font-black mb-1 uppercase italic">Periodic <span class="text-blue-500">Table</span></h1>
+                    <div class="relative max-w-sm mx-auto mb-2">
+                        <input type="text" id="element-search" placeholder="Search elements..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-center gap-3 mb-2 shrink-0">
+                    <div class="flex items-center gap-1">
+                        <label class="trend-toggle" title="Electronegativity">
+                            <input type="checkbox" id="toggle-en" onchange="renderTable()">
+                            <span class="trend-btn trend-en">EN</span>
+                        </label>
+                        <label class="trend-toggle" title="Atomic Radius">
+                            <input type="checkbox" id="toggle-radius" onchange="renderTable()">
+                            <span class="trend-btn trend-radius">Radius</span>
+                        </label>
+                        <label class="trend-toggle" title="Ionization Energy">
+                            <input type="checkbox" id="toggle-ionization" onchange="renderTable()">
+                            <span class="trend-btn trend-ionization">Ionization</span>
+                        </label>
+                        <label class="trend-toggle" title="Common Ion Charges">
+                            <input type="checkbox" id="toggle-ion-charge" onchange="renderTable()">
+                            <span class="trend-btn trend-ions">Ions</span>
+                        </label>
+                    </div>
+                    <div id="trend-legend" class="hidden flex items-center gap-2">
+                        <span class="text-[9px] text-white/40">Low</span>
+                        <div id="legend-gradient" class="w-12 h-1.5 rounded"></div>
+                        <span class="text-[9px] text-white/40">High</span>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-auto flex justify-center items-start">
+                    <div id="periodic-table" class="periodic-grid min-w-[900px]"></div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="fixed bottom-0 left-16 right-0 h-7 flex items-center justify-center bg-slate-900/95 border-t border-slate-800 z-30 text-[10px] uppercase tracking-[0.2em] font-bold italic text-slate-400/80">
+        Made by Ky'lin Spears • 118 Elements • 110M+ Molecules
+    </footer>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-8 relative shadow-2xl">
+            <button onclick="closeHelpModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl">&times;</button>
+            <h2 class="text-3xl font-black mb-2 bg-gradient-to-br from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent italic">Atomency Help</h2>
+            <p class="text-slate-400 text-sm mb-6">Interactive chemistry tool for visualizing elements and building molecules</p>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <span class="material-icons-round text-blue-500">table_chart</span> Periodic Table
+                    </h3>
+                    <ul class="space-y-2 text-slate-300 text-sm">
+                        <li>• <strong>Click element</strong> to view detailed properties</li>
+                        <li>• <strong>Toggle properties</strong> (EN, Radius, Ionization, Ions) to visualize trends</li>
+                        <li>• <strong>Search bar</strong> filters by name, symbol, or atomic number</li>
+                        <li>• <strong>Color coding</strong> shows element categories</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <span class="material-icons-round text-indigo-500">beaker</span> Molecular Builder (Lab)
+                    </h3>
+                    <ul class="space-y-2 text-slate-300 text-sm">
+                        <li>• <strong>Add Element button</strong> opens periodic table overlay</li>
+                        <li>• <strong>Click & drag atoms</strong> to reposition them</li>
+                        <li>• <strong>Atoms bond automatically</strong> when close enough</li>
+                        <li>• <strong>Click atom/molecule</strong> to inspect properties</li>
+                        <li>• <strong>Adjust sliders</strong> to change temperature and pressure</li>
+                        <li>• <strong>Import</strong> loads a previously exported <strong>JSON</strong> file back onto the canvas</li>
+                        <li>• <strong>Export</strong> lets you save the molecule as an <strong>Image (PNG)</strong> or <strong>JSON</strong> data file</li>
+                        <li>• <strong>Reset</strong> clears the canvas</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <span class="material-icons-round text-amber-500">radio_button_checked</span> Nuclear Decay Simulator
+                    </h3>
+                    <ul class="space-y-2 text-slate-300 text-sm">
+                        <li>• <strong>Select an isotope</strong> from presets or enter custom Z/A values</li>
+                        <li>• <strong>Decay Step</strong> performs one radioactive decay event with animation</li>
+                        <li>• <strong>Auto-Play</strong> walks through the full decay chain automatically</li>
+                        <li>• <strong>Visual nucleus</strong> shows protons (red) and neutrons (blue)</li>
+                        <li>• <strong>Nuclear equations</strong> display conservation of mass and charge</li>
+                        <li>• <strong>Decay chain</strong> shows the complete path to stability</li>
+                        <li>• Covers alpha (α), beta-minus (β⁻), beta-plus (β⁺), electron capture, and gamma (γ) decay</li>
+                        <li>• Aligns to <strong>NGSS HS-PS1-8</strong> (Nuclear Processes)</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <span class="material-icons-round text-emerald-500">keyboard</span> Keyboard Shortcuts
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <kbd class="px-2 py-1 bg-slate-700 rounded text-xs font-mono">Delete</kbd>
+                            <span class="text-slate-400 ml-2">Remove selected atom</span>
+                        </div>
+                        <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <kbd class="px-2 py-1 bg-slate-700 rounded text-xs font-mono">Esc</kbd>
+                            <span class="text-slate-400 ml-2">Close modal/deselect</span>
+                        </div>
+                        <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <kbd class="px-2 py-1 bg-slate-700 rounded text-xs font-mono">Space</kbd>
+                            <span class="text-slate-400 ml-2">Reset camera</span>
+                        </div>
+                        <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <kbd class="px-2 py-1 bg-slate-700 rounded text-xs font-mono">?</kbd>
+                            <span class="text-slate-400 ml-2">Show this help</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <span class="material-icons-round text-orange-500">lightbulb</span> Tips
+                    </h3>
+                    <ul class="space-y-2 text-slate-300 text-sm">
+                        <li>• <strong>Build common molecules</strong>: H₂O (water), CO₂ (carbon dioxide), NaCl (salt)</li>
+                        <li>• <strong>Experiment with temperature</strong> to see how molecular properties change</li>
+                        <li>• <strong>Explore trends</strong> in the periodic table to understand chemical patterns</li>
+                        <li>• <strong>Works best on desktop/laptop</strong> for full molecular building experience</li>
+                    </ul>
+                </div>
+
+                <div class="pt-4 border-t border-slate-700">
+                    <p class="text-slate-500 text-xs text-center">
+                        Built by <strong class="text-white">Ky'lin Spears</strong> for chemistry education<br>
+                        118 Elements • 110M+ Molecular Structures
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Element Detail Modal -->
+    <div id="element-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 relative shadow-2xl">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl">&times;</button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Periodic Table Overlay (for Lab mode) -->
+    <div id="pt-overlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-6xl w-full max-h-[90vh] overflow-auto shadow-2xl flex flex-col md:flex-row gap-6">
+            <div id="pt-sidebar" class="w-full md:w-64 bg-slate-900/50 p-6 rounded-xl border border-slate-700 order-2 md:order-1 flex flex-col">
+                <div class="flex-1 flex items-center justify-center text-slate-600 text-sm text-center italic">Hover over an element</div>
+            </div>
+            <div class="flex-1 order-1 md:order-2">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-white">Periodic Table</h2>
+                    <button id="btn-close-pt" class="p-2 hover:bg-slate-700 rounded-full text-slate-400">✕</button>
+                </div>
+                <!-- Search Bar -->
+                <div class="mb-4">
+                    <input type="text" id="pt-search" placeholder="Search elements (name, symbol, number)..."
+                        class="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                </div>
+                <div id="pt-grid" class="grid grid-cols-[repeat(18,minmax(0,1fr))] gap-1"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspector/Settings Panel (Floating) -->
+    <div id="settings-panel" class="fixed bottom-20 right-4 z-50 w-64 bg-slate-900/90 border border-slate-700 rounded-xl p-4 backdrop-blur shadow-2xl hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-[10px] font-black uppercase tracking-widest text-blue-400">Atom Properties</h4>
+            <button onclick="toggleSettings()" class="text-slate-400 hover:text-white">&times;</button>
+        </div>
+        <div id="settings-content" class="space-y-4">
+            <!-- Populated when element selected -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/elements-data.js?v=20260211d"></script>
+    <script src="js/reactions-data.js?v=20260211d"></script>
+    <script src="js/app.js?v=20260211d"></script>
+    <script src="js/alchemist-engine.js?v=20260211d"></script>
+    <script src="js/molecular-features.js?v=20260211d"></script>
+    <script src="js/vsepr-geometry.js?v=20260211d"></script>
+    <script src="js/vsepr-visual.js?v=20260211d"></script>
+    <script src="js/vsepr-physics.js?v=20260211d"></script>
+    <script src="js/alchemist-app.js?v=20260212a"></script>
+    <script src="js/enhancements.js?v=20260211d"></script>
+    <script src="js/reaction-kinetics.js?v=20260212a"></script>
+    <script src="js/nuclear-decay.js?v=20260212a"></script>
+    <script src="js/analytics.js?v=20260211d"></script>
+
+    <script>
+        // Page switching with sidebar active state
+        function showPage(page) {
+            document.getElementById('home-page').classList.toggle('hidden', page !== 'home');
+            document.getElementById('simulator-page').classList.toggle('hidden', page !== 'simulator');
+            document.getElementById('reactions-page').classList.toggle('hidden', page !== 'reactions');
+            document.getElementById('nuclear-page').classList.toggle('hidden', page !== 'nuclear');
+            document.getElementById('top-nav-home').classList.toggle('hidden', page !== 'home');
+
+            // Stop reaction kinetics when leaving that page
+            if (page !== 'reactions' && window.rkPage) {
+                window.rkPage.stop();
+            }
+
+            // Stop nuclear decay when leaving that page
+            if (page !== 'nuclear' && window.ndPage) {
+                window.ndPage.stop();
+            }
+
+            // Initialize reaction kinetics when entering
+            if (page === 'reactions' && window.initReactionKinetics) {
+                setTimeout(() => window.initReactionKinetics(), 50);
+            }
+
+            // Initialize nuclear decay when entering
+            if (page === 'nuclear' && window.initNuclearDecay) {
+                setTimeout(() => window.initNuclearDecay(), 50);
+            }
+
+            // Update sidebar active states
+            const btns = document.querySelectorAll('#left-sidebar .sidebar-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('bg-primary/10', 'text-primary');
+                btn.classList.add('text-slate-400');
+            });
+            // Table=0, Lab=1, Elements=2, Reactions=3, Nuclear=4
+            const pageMap = { 'home': 0, 'simulator': 1, 'reactions': 3, 'nuclear': 4 };
+            const activeIdx = pageMap[page] ?? -1;
+            if (activeIdx >= 0 && btns[activeIdx]) {
+                btns[activeIdx].classList.add('bg-primary/10', 'text-primary');
+                btns[activeIdx].classList.remove('text-slate-400');
+            }
+        }
+
+        // Close inspector panel and deselect atom
+        function closeInspector() {
+            const panel = document.getElementById('inspector-panel');
+            if (panel) panel.classList.add('translate-x-full');
+            // Restore temperature/pressure controls
+            const controlsPanel = document.getElementById('controls-panel');
+            if (controlsPanel) {
+                controlsPanel.classList.remove('opacity-0', 'pointer-events-none');
+            }
+            // Deselect atom so inspector doesn't re-open on next updateScene
+            if (window.deselectAtom) window.deselectAtom();
+        }
+
+        // Settings panel (for old app.js compatibility)
+        function toggleSettings(p) {
+            const panel = document.getElementById('settings-panel');
+            if (!p) { panel.classList.add('hidden'); return; }
+            panel.classList.remove('hidden');
+        }
+
+        // Default to Lab (simulator) mode on load
+        window.addEventListener('load', () => {
+            showPage('simulator');
+        });
+    </script>
+
+    <!-- PWA Service Worker & Install Prompt -->
+    <script>
+// Register service worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(function(registration) {
+                console.log('ServiceWorker registered:', registration.scope);
+            })
+            .catch(function(error) {
+                console.log('ServiceWorker registration failed:', error);
+            });
+    });
+}
+
+// Install prompt handling
+let deferredPrompt;
+let installBannerShown = localStorage.getItem('pwa_install_banner_dismissed');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Show install banner if not previously dismissed
+    if (!installBannerShown) {
+        showInstallBanner();
+    }
+});
+
+function showInstallBanner() {
+    const banner = document.createElement('div');
+    banner.id = 'pwa-install-banner';
+    banner.style.cssText = `
+        position: fixed;
+        bottom: 40px;
+        left: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+        color: white;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        animation: slideUp 0.3s ease;
+        margin-left: 64px;
+    `;
+
+    banner.innerHTML = `
+        <div style="flex: 1;">
+            <strong style="display: block; margin-bottom: 4px;">📱 Install Atomency</strong>
+            <span style="opacity: 0.95; font-size: 13px;">Add to your home screen for quick access</span>
+        </div>
+        <button id="pwa-install-btn" style="background: white; color: #6366f1; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">Install</button>
+        <button id="pwa-dismiss-btn" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">✕</button>
+    `;
+
+    // Add slide-up animation
+    const style = document.createElement('style');
+    style.textContent = '@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }';
+    document.head.appendChild(style);
+
+    document.body.appendChild(banner);
+
+    // Install button click
+    document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('Install prompt outcome:', outcome);
+            deferredPrompt = null;
+            banner.remove();
+        }
+    });
+
+    // Dismiss button click
+    document.getElementById('pwa-dismiss-btn').addEventListener('click', () => {
+        localStorage.setItem('pwa_install_banner_dismissed', 'true');
+        banner.remove();
+    });
+}
+
+// Detect if already installed
+window.addEventListener('appinstalled', () => {
+    console.log('PWA was installed');
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.remove();
+});
+
+// iOS-specific install hint
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+if (isIOS && !isStandalone && !installBannerShown) {
+    setTimeout(() => {
+        const iosBanner = document.createElement('div');
+        iosBanner.style.cssText = `
+            position: fixed;
+            bottom: 40px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+            z-index: 9999;
+            font-size: 14px;
+            animation: slideUp 0.3s ease;
+            margin-left: 64px;
+        `;
+
+        iosBanner.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
+                <div style="flex: 1;">
+                    <strong style="display: block; margin-bottom: 4px;">📱 Install Atomency</strong>
+                    <span style="opacity: 0.95; font-size: 13px;">Tap <strong>Share</strong> <span style="font-size: 16px;">⎋</span> then "Add to Home Screen"</span>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove(); localStorage.setItem('pwa_install_banner_dismissed', 'true');" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 16px;">✕</button>
+            </div>
+        `;
+
+        document.body.appendChild(iosBanner);
+    }, 2000); // Show after 2 seconds
+}
+    </script>
+</body>
+</html>

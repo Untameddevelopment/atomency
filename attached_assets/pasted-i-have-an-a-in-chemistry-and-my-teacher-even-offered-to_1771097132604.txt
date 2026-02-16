@@ -1,0 +1,63 @@
+I have an A in chemistry, and my teacher even offered to write me a recommendation to switch to AP Chemistry. However, he noted that the decision isn’t entirely up to him my counselor, Ms. Nolan (the AP English teacher), and the AP Chemistry teacher all need to give input for it to go through. That’s just backstory, though. My main idea isn’t about getting into AP Chemistry I’m confident I can do that. My idea is about boosting my chances for Harvard and strengthening my applications. I want to create a chemistry web app that includes the periodic table and features the current platform my teacher uses lacks. My plan is to improve on it, show it to my chemistry teacher on Wednesday (school was closed Monday for Martin Luther King Day), and gauge how much he likes it. From there, I want to get him to use it, share it with the AP Chemistry teacher and other science teachers, and then present it to my counselor to demonstrate its impact. Ideally, this could become an official tool for the county or district, adopted by multiple schools. This would function as my equivalent of a startup, fundraiser, or charity project, showing initiative, technical skill, and leadership on a larger scale.
+
+Fast forward:
+
+it’s friday, like 7:26 pm. i showed it to him today since i had him first period, 8:30–10:00, and he was genuinely impressed. he straight up said we could use this in the curriculum and was kinda blown away by it. he said he’d help me get it on Clever, write me a recommendation to the counselor, and all that. he even asked what school i was at before i came here. he told me to email him a link so he can mess with the tool himself, tell me what to add, and even check the quarter 3 curriculum to see how it lines up. he said he’d let me know what else to build so it fits education-wise, which would make it way more likely to get approved as an official tool across pgcps. it’s late now though and i still haven’t sent the email, i’m only just settling down now.
+
+Fast forward: I sent the email on friday he hasnt responded yet and its saturday 9:57 PM and no reply yet. I've been working on the webapp over the weekend and changed a lot (You can ask me) and its coming along well and is a HUGE difference from what a showed the teacher, to the point where what I showed him would look trash to what I have now. Also theres a big storm allegedly coming thats supposed to hit 12 am tomorrow and theres allegedly going to be a week or more off school and everyones been talking about it all the past week. The news report has been hit or miss like maybe 20 inches of snow maybe none maybe 3 inches its been all mixed up but apparently its the biggest snow storm of the decade and possibly last century.
+
+Update skip forward its 10:23 PM the snow storm did come school is closed till thurday its currently monday, I updated the tool exponentially the molecular chemistry engine is now a lot better, visually, logically,etc and it can support the creation and identification of over 110,000,000+ different molecular structures. The teacher never replied to the email.It's currently 10:18 PM
+
+His name is Dr. Soltes. Fast forward to today, about three weeks after our last conversation, I finally had the chance to show him the latest version of the chemistry web app. I walked him through all the updates and mentioned the email I had sent previously. He admitted he hadn’t seen the email, but then told me that just the day before, he had actually been discussing the app with a biology teacher.
+
+He opened the tool on his own laptop while I explained how everything worked, navigating it alongside me. As he explored the app, he said, “Wow, we could really use this this quarter,” and mentioned that he very likely might start incorporating it into upcoming lessons. I demonstrated the side panel feature for a molecule, which displays in-depth information like VSEPR theory formation, boiling points, and other key chemical properties. He responded, “Oh I like this… we need this information,” highlighting that it addressed real instructional needs.
+
+He asked whether molecules could be exported from the site, for example as images, and I told him it’s not implemented yet, but I plan to add that feature soon. He also asked if future updates would automatically appear for him while using the same URL, which I confirmed.
+
+Before we wrapped up, Dr. Soltes said he planned to spend more time exploring the app on his own and would follow up with feedback about what it needs next.It's the next day 7:19 pm just got back from track finna get in the shower lmk what you wanna know and I'll tell you when I get back
+
+1. I didn't have Dr soltes today so I don't think so but I assume not 2. Goes back to 1 3. I do not have analytics set up yet 4. My name is in the footer 5. No email as of yet 6. raw netlify link 7. I am 8. Both Also heard from my Spanish teacher the teachers have a meeting or a day where we leave school early on Friday so they can grade and plan new assignments.
+
+I just implemented and added the export AND an import feature today. I also added a complete algorithmic nuclear decay tab and a reaction simulator.
+
+I just bought the domain Atomency.com
+
+Atomency, Advanced Molecular Modeling for Instruction.
+
+I set it up with my netlify already.
+
+There's no bugs, no lag, and the UI is simple s can be.
+
+The only reason I added those two things is because thats all I was missing before I would be 100% aligned with NGSS HS standards.
+
+It's currently 1:06 AM I have his class in the morning from 8:30 AM to 10 AMIt's the next day. Feb 12th 8:41 pm I'm back from track took a shower, had his class today, showed it to him, he even wrote an email to my counselor about it but my counselor was not here so I didn't get to talk to him about it and I rebranded the entire site to sat Atomency I told him that was the new url he told me he liked the name a lot.I showed him the export and import the nuclear reaction, etc he liked it and told me some new information. He told me he knows he has a meeting for the science teachers coming up sometime this month and he's going to tell them about my app and advocate for it. I've also just got done adding a terms of service and about me to the app and the footer now says Ky'lin Spears all rights reserved. so what you wanna know or talk abt
+
+No login required Working on mobile friendly Working PWA no risk of it breaking during live classroom use It's server less so uptime monitoring doesn't really exist And I'm working on analytics I'm pretty sure its after and also I realized the domain needs to approved to allow students to visit it on the school computer. I can also show you the email if you want.
+
+"Hello, Mr. Akinyele,
+
+I have Kylin Spears in my Chemistry 1B class, and he recently shared a chemistry website/application he is developing called Atomency. Although it is still under construction, it shows strong potential as a valuable resource for high school chemistry students (and possibly for teachers as well)
+
+Kylin asked me to review the website and share my feedback with you, along with any comments or suggestions that could support his scholarship or college application. After exploring the site, I believe it has meaningful instructional potential. With further development, particularly by expanding its coverage to include additional concepts aligned with our district’s high school chemistry curriculum, it could become a highly valuable academic resource.
+
+This morning, I provided him with suggestions, including strengthening foundational chemistry content and pursuing peer review to ensure alignment with NGSS standards. I am genuinely impressed by his initiative, creativity, and commitment to enhancing learning through technology. I look forward to seeing how his project continues to evolve.
+
+Yours truly,
+
+Glenn C. Soltes, EdD
+
+AP Environmental Science and Chemistry Instructor
+
+Suitland HS STEM Fair Coordinator
+
+Suitland High School
+
+5200 Silver Hill Rd., District Heights, MD 20747
+
+[Achiever|learner| Includer|Discipline|Consistency]"
+
+
+
+Make a landing page for this app.
+
+Reference the site https://www.atomency.com 

@@ -1,0 +1,28 @@
+{
+  "name": "Atomency",
+  "short_name": "Atomency",
+  "description": "Interactive periodic table and molecular builder with 110M+ molecular structures. Built for K-12 chemistry education.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050a14",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "science", "chemistry", "stem"],
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr"
+}
