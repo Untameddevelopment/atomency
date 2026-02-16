@@ -5,70 +5,206 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atomency Analytics Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #050a14 0%, #0f172a 50%, #050a14 100%);
+      background-size: 400% 400%;
+      animation: gradientBG 20s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .glass {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-shine {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-shine::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+      );
+      transform: rotate(45deg) translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .btn-shine:hover::after {
+      transform: rotate(45deg) translateX(100%);
+    }
+
+    .spinner {
+      border: 4px solid rgba(99, 102, 241, 0.1);
+      border-left-color: #6366f1;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .progress-bar {
+      background: rgba(51, 65, 85, 0.6);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen">
+<body class="text-white min-h-screen antialiased">
   <div class="container mx-auto p-8">
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-3xl font-black mb-2 uppercase italic">Analytics <span class="text-blue-500">Dashboard</span></h1>
-        <p class="text-slate-400 text-sm">Privacy-friendly usage metrics for Atomency</p>
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+      <div class="flex items-center gap-4">
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-500 p-3 rounded-xl">
+          <span class="material-icons-round text-white text-2xl">analytics</span>
+        </div>
+        <div>
+          <h1 class="text-3xl md:text-4xl font-black text-gradient mb-1 uppercase italic">
+            Analytics <span class="text-indigo-400">Dashboard</span>
+          </h1>
+          <p class="text-slate-400 text-sm">Privacy-friendly usage metrics for Atomency</p>
+        </div>
       </div>
-      <div class="flex gap-3">
-        <button onclick="loadStats(1)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold text-sm transition-colors">24h</button>
-        <button onclick="loadStats(7)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold text-sm transition-colors active">7d</button>
-        <button onclick="loadStats(30)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold text-sm transition-colors">30d</button>
+      <div class="flex gap-2 glass rounded-xl p-1">
+        <button onclick="loadStats(1)" class="px-5 py-2.5 rounded-lg font-bold text-sm transition-all btn-shine" data-period="1">24h</button>
+        <button onclick="loadStats(7)" class="px-5 py-2.5 rounded-lg font-bold text-sm transition-all btn-shine bg-gradient-to-r from-indigo-500 to-purple-500" data-period="7">7d</button>
+        <button onclick="loadStats(30)" class="px-5 py-2.5 rounded-lg font-bold text-sm transition-all btn-shine" data-period="30">30d</button>
       </div>
     </div>
 
-    <div id="loading" class="text-center py-20">
-      <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-      <p class="mt-4 text-slate-400">Loading analytics...</p>
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-32">
+      <div class="spinner mx-auto mb-6"></div>
+      <p class="text-slate-400">Loading analytics...</p>
     </div>
 
+    <!-- Stats Content -->
     <div id="stats" class="hidden">
       <!-- Overview Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
-          <div class="text-slate-400 text-sm font-bold uppercase tracking-wider mb-2">Page Views</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card glass rounded-2xl p-6 border border-slate-700/50">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+              <span class="material-icons-round text-blue-400">visibility</span>
+            </div>
+            <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">Page Views</div>
+          </div>
           <div id="stat-pageviews" class="text-4xl font-black">-</div>
         </div>
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
-          <div class="text-slate-400 text-sm font-bold uppercase tracking-wider mb-2">Unique Visitors</div>
+
+        <div class="stat-card glass rounded-2xl p-6 border border-slate-700/50">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-lg flex items-center justify-center">
+              <span class="material-icons-round text-emerald-400">people</span>
+            </div>
+            <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">Unique Visitors</div>
+          </div>
           <div id="stat-visitors" class="text-4xl font-black">-</div>
         </div>
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
-          <div class="text-slate-400 text-sm font-bold uppercase tracking-wider mb-2">Molecules Built</div>
-          <div id="stat-molecules" class="text-4xl font-black text-blue-500">-</div>
+
+        <div class="stat-card glass rounded-2xl p-6 border border-slate-700/50">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-lg flex items-center justify-center">
+              <span class="material-icons-round text-purple-400">science</span>
+            </div>
+            <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">Molecules Built</div>
+          </div>
+          <div id="stat-molecules" class="text-4xl font-black text-purple-400">-</div>
         </div>
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
-          <div class="text-slate-400 text-sm font-bold uppercase tracking-wider mb-2">VSEPR Calcs</div>
-          <div id="stat-vsepr" class="text-4xl font-black text-emerald-500">-</div>
+
+        <div class="stat-card glass rounded-2xl p-6 border border-slate-700/50">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 rounded-lg flex items-center justify-center">
+              <span class="material-icons-round text-cyan-400">architecture</span>
+            </div>
+            <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">VSEPR Calcs</div>
+          </div>
+          <div id="stat-vsepr" class="text-4xl font-black text-cyan-400">-</div>
         </div>
       </div>
 
       <!-- Feature Usage -->
-      <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl mb-8">
-        <h2 class="text-xl font-black mb-4 uppercase">Feature Usage</h2>
-        <div class="space-y-3" id="feature-usage"></div>
+      <div class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 mb-8">
+        <h2 class="text-xl font-black mb-6 flex items-center gap-3">
+          <span class="material-icons-round text-indigo-400">insights</span>
+          Feature Usage
+        </h2>
+        <div class="space-y-4" id="feature-usage"></div>
       </div>
 
       <!-- Event Types -->
-      <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl mb-8">
-        <h2 class="text-xl font-black mb-4 uppercase">Events Breakdown</h2>
-        <div class="space-y-2" id="event-types"></div>
+      <div class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 mb-8">
+        <h2 class="text-xl font-black mb-6 flex items-center gap-3">
+          <span class="material-icons-round text-emerald-400">event</span>
+          Events Breakdown
+        </h2>
+        <div class="space-y-3" id="event-types"></div>
       </div>
 
       <!-- Popular Pages -->
-      <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
-        <h2 class="text-xl font-black mb-4 uppercase">Popular Pages</h2>
-        <div class="space-y-2" id="popular-pages"></div>
+      <div class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50">
+        <h2 class="text-xl font-black mb-6 flex items-center gap-3">
+          <span class="material-icons-round text-amber-400">trending_up</span>
+          Popular Pages
+        </h2>
+        <div class="space-y-3" id="popular-pages"></div>
       </div>
     </div>
 
-    <div id="error" class="hidden text-center py-20">
+    <!-- Error State -->
+    <div id="error" class="hidden text-center py-32">
       <div class="text-red-500 text-6xl mb-4">⚠️</div>
-      <p class="text-slate-400 mb-2">Failed to load analytics</p>
+      <p class="text-slate-400 mb-2 text-lg">Failed to load analytics</p>
       <p class="text-slate-600 text-sm" id="error-message"></p>
     </div>
   </div>
@@ -78,6 +214,16 @@
 
     async function loadStats(days) {
       currentDays = days;
+
+      // Update button states
+      document.querySelectorAll('[data-period]').forEach(btn => {
+        if (parseInt(btn.dataset.period) === days) {
+          btn.classList.add('bg-gradient-to-r', 'from-indigo-500', 'to-purple-500');
+        } else {
+          btn.classList.remove('bg-gradient-to-r', 'from-indigo-500', 'to-purple-500');
+        }
+      });
+
       document.getElementById('loading').classList.remove('hidden');
       document.getElementById('stats').classList.add('hidden');
       document.getElementById('error').classList.add('hidden');
@@ -96,19 +242,19 @@
 
         // Feature usage bars
         const features = [
-          { name: 'Periodic Table', count: data.featureUsage.periodic_table || 0, color: 'bg-blue-500' },
-          { name: 'Molecule Builder', count: data.featureUsage.molecule_builder || 0, color: 'bg-emerald-500' },
-          { name: 'VSEPR Calculator', count: data.featureUsage.vsepr_calculator || 0, color: 'bg-purple-500' }
+          { name: 'Periodic Table', count: data.featureUsage.periodic_table || 0, color: 'from-blue-500 to-blue-600' },
+          { name: 'Molecule Builder', count: data.featureUsage.molecule_builder || 0, color: 'from-emerald-500 to-emerald-600' },
+          { name: 'VSEPR Calculator', count: data.featureUsage.vsepr_calculator || 0, color: 'from-purple-500 to-purple-600' }
         ];
         const maxFeature = Math.max(...features.map(f => f.count), 1);
         document.getElementById('feature-usage').innerHTML = features.map(f => `
           <div>
-            <div class="flex justify-between mb-1">
-              <span class="text-sm font-bold text-slate-400">${f.name}</span>
-              <span class="text-sm font-bold">${f.count.toLocaleString()}</span>
+            <div class="flex justify-between mb-2">
+              <span class="text-sm font-bold text-slate-300">${f.name}</span>
+              <span class="text-sm font-bold text-white">${f.count.toLocaleString()}</span>
             </div>
-            <div class="w-full bg-slate-800 rounded-full h-2">
-              <div class="${f.color} h-2 rounded-full" style="width: ${(f.count / maxFeature) * 100}%"></div>
+            <div class="progress-bar h-2.5">
+              <div class="progress-bar-fill bg-gradient-to-r ${f.color}" style="width: ${(f.count / maxFeature) * 100}%"></div>
             </div>
           </div>
         `).join('');
@@ -116,36 +262,54 @@
         // Event types
         const maxEvent = Math.max(...data.eventTypes.map(e => parseInt(e.count)), 1);
         document.getElementById('event-types').innerHTML = data.eventTypes.map(e => `
-          <div class="flex justify-between items-center bg-slate-800 p-3 rounded-lg">
-            <span class="font-mono text-sm text-blue-400">${e.event_type}</span>
-            <div class="flex items-center gap-3">
-              <div class="w-32 bg-slate-700 rounded-full h-1.5">
-                <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${(parseInt(e.count) / maxEvent) * 100}%"></div>
+          <div class="flex justify-between items-center glass-hover rounded-xl p-4 border border-slate-700/30">
+            <span class="font-mono text-sm text-indigo-400">${e.event_type}</span>
+            <div class="flex items-center gap-4">
+              <div class="w-40 progress-bar h-1.5">
+                <div class="progress-bar-fill" style="width: ${(parseInt(e.count) / maxEvent) * 100}%"></div>
               </div>
-              <span class="font-bold text-white w-16 text-right">${parseInt(e.count).toLocaleString()}</span>
+              <span class="font-bold text-white w-20 text-right">${parseInt(e.count).toLocaleString()}</span>
             </div>
           </div>
         `).join('') || '<div class="text-slate-600 text-sm italic">No events yet</div>';
 
         // Popular pages
         document.getElementById('popular-pages').innerHTML = data.popularPages.map((p, i) => `
-          <div class="flex justify-between items-center bg-slate-800 p-3 rounded-lg">
-            <div class="flex items-center gap-3">
-              <span class="text-blue-400 font-black text-lg">${i + 1}</span>
-              <span class="font-mono text-sm">${p.page_path}</span>
+          <div class="flex justify-between items-center glass-hover rounded-xl p-4 border border-slate-700/30">
+            <div class="flex items-center gap-4">
+              <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <span class="font-black text-white">${i + 1}</span>
+              </div>
+              <span class="font-mono text-sm text-slate-300">${p.page_path}</span>
             </div>
-            <span class="font-bold">${parseInt(p.views).toLocaleString()} views</span>
+            <span class="font-bold text-white">${parseInt(p.views).toLocaleString()} views</span>
           </div>
         `).join('') || '<div class="text-slate-600 text-sm italic">No page views yet</div>';
 
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('stats').classList.remove('hidden');
+
+        // Animate stats on load
+        animateStats();
       } catch (err) {
         console.error('Analytics load error:', err);
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('error').classList.remove('hidden');
         document.getElementById('error-message').textContent = err.message;
       }
+    }
+
+    function animateStats() {
+      const statCards = document.querySelectorAll('.stat-card');
+      statCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          card.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 100 + (index * 100));
+      });
     }
 
     // Load 7-day stats by default
