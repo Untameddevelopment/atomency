@@ -3,3 +3,10 @@ node_modules/
 .env
 .env.local
 .playwright-cli/
+
+# Development artifacts
+*.zip
+js/data/
+
+# Lock files (keep deno.lock as it's used)
+package-lock.json
