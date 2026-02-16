@@ -131,8 +131,8 @@ class ChemistryEngine {
     // ============================================================================
     
     resolve() {
-        // Build spatial hash for efficient neighbor lookups
-        this._spatialHash = this.buildSpatialHash();
+        // Build spatial hash for optimized collision detection
+        this.buildSpatialHash();
         
         // Apply collision physics
         this.applyCollisionPhysics();
@@ -157,10 +157,61 @@ class ChemistryEngine {
         
         return { bonds: this.bonds, molecules: this.molecules };
     }
+
+    buildSpatialHash() {
+        // Build spatial hash grid for optimized collision detection
+        // Grid size: 100 pixels
+        this.spatialHash = new Map();
+        const gridSize = 100;
+        
+        this.atoms.forEach((atom, index) => {
+            const gridX = Math.floor(atom.x / gridSize);
+            const gridY = Math.floor(atom.y / gridSize);
+            const key = `${gridX},${gridY}`;
+            
+            if (!this.spatialHash.has(key)) {
+                this.spatialHash.set(key, []);
+            }
+            this.spatialHash.get(key).push(index);
+        });
+    }
+
+    getNearbyAtoms(atom, radius = 100) {
+        // Get atoms within radius of given atom using spatial hash
+        if (!this.spatialHash) return [];
+        
+        const gridX = Math.floor(atom.x / 100);
+        const gridY = Math.floor(atom.y / 100);
+        const nearby = [];
+        
+        // Check neighboring grid cells
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                const key = `${gridX + dx},${gridY + dy}`;
+                const cellAtoms = this.spatialHash.get(key);
+                if (cellAtoms) {
+                    cellAtoms.forEach(index => {
+                        const otherAtom = this.atoms[index];
+                        if (otherAtom !== atom) {
+                            const dist = Math.sqrt(
+                                Math.pow(otherAtom.x - atom.x, 2) + 
+                                Math.pow(otherAtom.y - atom.y, 2)
+                            );
+                            if (dist <= radius) {
+                                nearby.push(otherAtom);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+        
+        return nearby;
+    }
     
     applyCollisionPhysics() {
-        // Optimized: single iteration with better position resolution
-        for (let i = 0; i < this.atoms.length; i++) {
+        for (let step = 0; step < 3; step++) {
+            for (let i = 0; i < this.atoms.length; i++) {
                 for (let j = i + 1; j < this.atoms.length; j++) {
                     const a1 = this.atoms[i];
                     const a2 = this.atoms[j];
@@ -184,6 +235,7 @@ class ChemistryEngine {
                     }
                 }
             }
+        }
     }
     
     calculateAtomParameters() {
@@ -970,7 +1022,7 @@ class ChemistryEngine {
     // ============================================================================
 
     getMolecularProperties(atoms, counts) {
-        const MW = atoms.reduce((sum, a) => sum + (a.element.atomic_mass || a.element.atomicMass || a.element.mass || a.element.number || 0), 0);
+        const MW = atoms.reduce((sum, a) => sum + (a.element.atomic_mass || 0), 0);
         const totalElectrons = atoms.reduce((sum, a) => sum + a.element.number, 0);
         const nAtoms = atoms.length;
 
