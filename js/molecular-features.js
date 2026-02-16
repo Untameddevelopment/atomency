@@ -132,8 +132,8 @@ class IsotopeSystem {
             const element = atom.element;
             // Use standard atomic weight from periodic table data
             // This is the weighted average of all naturally occurring isotopes
-            const stdWeight = element.atomicMass || element.atomic_mass || element.number || 0;
-            totalMass += parseFloat(stdWeight);
+            const stdWeight = element.atomic_mass || element.atomicMass || element.mass || element.number || 0;
+            totalMass += parseFloat(stdWeight) || 0;
         });
 
         return Math.round(totalMass * 1000) / 1000;
