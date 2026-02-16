@@ -117,6 +117,10 @@
                     <span class="material-icons-round text-lg">info</span>
                     <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">About</span>
                 </button>
+                <a href="privacy.html" class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
+                    <span class="material-icons-round text-lg">privacy_tip</span>
+                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Privacy</span>
+                </a>
             </div>
         </aside>
 
@@ -656,7 +660,6 @@
         <span class="flex items-center gap-3">
             <a href="#" onclick="showPage('terms'); return false;" class="hover:text-indigo-400 transition-colors cursor-pointer">Terms of Use</a>
             <span class="text-slate-600">•</span>
-            <a href="privacy.html" class="hover:text-indigo-400 transition-colors cursor-pointer">Privacy Policy</a>
             <span>118 Elements • 110M+ Molecules</span>
         </span>
     </footer>
@@ -1204,7 +1207,10 @@
             const totalCharge = engine.atoms.reduce((sum, a) => sum + (a.formalCharge || 0), 0);
             
             document.getElementById('analysis-total-mass').textContent = totalMass.toFixed(2);
-            document.getElementById('analysis-total-charge').textContent = (totalCharge > 0 ? '+' : '') + totalCharge;
+            const totalChargeEl = document.getElementById('analysis-total-charge');
+            if (totalChargeEl) {
+                totalChargeEl.textContent = (totalCharge > 0 ? '+' : '') + totalCharge;
+            }
 
             // Environment
             document.getElementById('analysis-temperature').textContent = (engine.temperature || 298) + ' K';
