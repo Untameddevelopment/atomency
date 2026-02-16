@@ -656,6 +656,7 @@
         <span class="flex items-center gap-3">
             <a href="#" onclick="showPage('terms'); return false;" class="hover:text-indigo-400 transition-colors cursor-pointer">Terms of Use</a>
             <span class="text-slate-600">•</span>
+            <a href="privacy.html" class="hover:text-indigo-400 transition-colors cursor-pointer">Privacy Policy</a>
             <span>118 Elements • 110M+ Molecules</span>
         </span>
     </footer>
@@ -1190,13 +1191,6 @@
         function refreshAnalysis() {
             if (typeof engine === 'undefined') return;
 
-            // Helper to get atomic mass from element (handles both API and local data formats)
-            const getAtomicMass = (element) => {
-                if (!element) return 0;
-                const mass = element.atomic_mass || element.atomicMass || element.mass || element.number;
-                return parseFloat(mass) || 0;
-            };
-
             const atoms = engine.atoms || [];
             const bonds = engine.bonds || [];
             const molecules = engine.molecules || [];
@@ -1206,9 +1200,11 @@
             document.getElementById('analysis-total-bonds').textContent = bonds.length;
             document.getElementById('analysis-total-molecules').textContent = molecules.filter(m => m.atomIds.length > 1).length;
 
-            const totalMass = engine.atoms.reduce((sum, a) => sum + (getAtomicMass(a.element)), 0);
+            const totalMass = engine.atoms.reduce((sum, a) => sum + (a.element.atomicMass || a.element.atomic_mass || 0), 0);
+            const totalCharge = engine.atoms.reduce((sum, a) => sum + (a.formalCharge || 0), 0);
             
             document.getElementById('analysis-total-mass').textContent = totalMass.toFixed(2);
+            document.getElementById('analysis-total-charge').textContent = (totalCharge > 0 ? '+' : '') + totalCharge;
 
             // Environment
             document.getElementById('analysis-temperature').textContent = (engine.temperature || 298) + ' K';
@@ -1222,7 +1218,7 @@
             } else {
                 molList.innerHTML = multiAtomMols.map(mol => {
                     const molAtoms = mol.atomIds.map(id => atoms.find(a => a.id === id)).filter(Boolean);
-                    const mass = molAtoms.reduce((s, a) => s + (getAtomicMass(a.element)), 0);
+                    const mass = molAtoms.reduce((s, a) => s + (a.element?.atomicMass || 0), 0);
                     const stabilityColor = mol.stability >= 70 ? 'text-emerald-400' : mol.stability >= 40 ? 'text-amber-400' : 'text-rose-400';
                     const stabilityBarColor = mol.stability >= 70 ? 'bg-emerald-500' : mol.stability >= 40 ? 'bg-amber-500' : 'bg-rose-500';
                     const stateColor = mol.stateOfMatter === 'Gas' ? 'text-emerald-400' : mol.stateOfMatter === 'Liquid' ? 'text-blue-400' : mol.stateOfMatter === 'Solid' ? 'text-slate-300' : 'text-slate-400';
