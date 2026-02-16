@@ -1,0 +1,264 @@
+:root {
+    --background: 222 47% 11%;
+    --card: 222 47% 14%;
+    --primary: 199 89% 48%;
+    --cat-alkali: 340 82% 52%;
+    --cat-alkaline: 25 95% 53%;
+    --cat-transition: 45 93% 47%;
+    --cat-post-transition: 170 60% 40%;
+    --cat-metalloid: 190 80% 40%;
+    --cat-nonmetal: 200 80% 50%;
+    --cat-halogen: 280 60% 50%;
+    --cat-noble: 320 60% 50%;
+    --cat-lanthanide: 30 60% 60%;
+    --cat-actinide: 340 60% 60%;
+}
+
+body {
+    background-color: hsl(222, 47%, 11%);
+    color: white;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.periodic-grid {
+    display: grid;
+    grid-template-columns: repeat(18, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+    max-width: 1400px;
+    padding: 24px 24px 2rem 24px; /* Room for hover scale(1.1) on all edges */
+}
+
+.element-cell {
+    aspect-ratio: 1 / 1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.element-cell:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.ion-charge-badge {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 7px;
+    font-weight: 900;
+    color: #a855f7;
+    background: rgba(168, 85, 247, 0.15);
+    padding: 1px 3px;
+    border-radius: 3px;
+    line-height: 1;
+}
+
+.ion-charge-badge:empty {
+    display: none;
+}
+
+.trend-toggle {
+    cursor: pointer;
+}
+
+.trend-toggle input {
+    display: none;
+}
+
+.trend-btn {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.2s;
+}
+
+.trend-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.trend-toggle input:checked + .trend-en {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    color: #3b82f6;
+}
+
+.trend-toggle input:checked + .trend-radius {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.5);
+    color: #22c55e;
+}
+
+.trend-toggle input:checked + .trend-ionization {
+    background: rgba(249, 115, 22, 0.2);
+    border-color: rgba(249, 115, 22, 0.5);
+    color: #f97316;
+}
+
+.trend-toggle input:checked + .trend-ions {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: #a855f7;
+}
+
+.nav-tab {
+    color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+}
+
+.nav-tab:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-tab.active {
+    background: #3b82f6;
+    color: white;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+#simulator-canvas {
+    flex: 1;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.particle {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    user-select: none;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    transition: transform 0.1s, border-color 0.3s, box-shadow 0.3s, opacity 0.3s;
+}
+
+.fused-atoms-visual {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.fused-atom-circle {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3), inset 5px 5px 10px rgba(255,255,255,0.2);
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Unique Molecule Animations */
+@keyframes wave {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+.animate-wave {
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.4), transparent);
+    width: 200%;
+    height: 100%;
+    animation: wave 3s infinite linear;
+}
+.animate-wave-slow {
+    background: linear-gradient(90deg, transparent, rgba(147, 197, 253, 0.2), transparent);
+    width: 200%;
+    height: 100%;
+    animation: wave 5s infinite linear;
+}
+
+@keyframes explosion-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; filter: brightness(1.5); }
+    100% { transform: scale(1); opacity: 1; }
+}
+.behavior-explosive {
+    animation: explosion-pulse 2s infinite ease-in-out;
+}
+
+.fused-compound .flex-col {
+    z-index: 10;
+    pointer-events: none;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+    50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.7); }
+}
+
+.fused-compound {
+    animation: pulse-glow 2s infinite ease-in-out;
+}
+
+.particle:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+}
+
+.particle:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+}
+
+.electron-shell {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.electron {
+    position: absolute;
+    width: 1.5px;
+    height: 1.5px;
+    background: #3b82f6;
+    border-radius: 50%;
+}
+
+@keyframes rotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    animation: rotate linear infinite;
+}

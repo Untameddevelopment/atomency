@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atomency Analytics Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+  <div class="container mx-auto p-8">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-black mb-2 uppercase italic">Analytics <span class="text-blue-500">Dashboard</span></h1>
+        <p class="text-slate-400 text-sm">Privacy-friendly usage metrics for Atomency</p>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="loadStats(1)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold text-sm transition-colors">24h</button>
+        <button onclick="loadStats(7)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold text-sm transition-colors active">7d</button>
+        <button onclick="loadStats(30)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold text-sm transition-colors">30d</button>
+      </div>
+    </div>
+
+    <div id="loading" class="text-center py-20">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+      <p class="mt-4 text-slate-400">Loading analytics...</p>
+    </div>
+
+    <div id="stats" class="hidden">
+      <!-- Overview Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
+          <div class="text-slate-400 text-sm font-bold uppercase tracking-wider mb-2">Page Views</div>
+          <div id="stat-pageviews" class="text-4xl font-black">-</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
+          <div class="text-slate-400 text-sm font-bold uppercase tracking-wider mb-2">Unique Visitors</div>
+          <div id="stat-visitors" class="text-4xl font-black">-</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
+          <div class="text-slate-400 text-sm font-bold uppercase tracking-wider mb-2">Molecules Built</div>
+          <div id="stat-molecules" class="text-4xl font-black text-blue-500">-</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
+          <div class="text-slate-400 text-sm font-bold uppercase tracking-wider mb-2">VSEPR Calcs</div>
+          <div id="stat-vsepr" class="text-4xl font-black text-emerald-500">-</div>
+        </div>
+      </div>
+
+      <!-- Feature Usage -->
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl mb-8">
+        <h2 class="text-xl font-black mb-4 uppercase">Feature Usage</h2>
+        <div class="space-y-3" id="feature-usage"></div>
+      </div>
+
+      <!-- Event Types -->
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl mb-8">
+        <h2 class="text-xl font-black mb-4 uppercase">Events Breakdown</h2>
+        <div class="space-y-2" id="event-types"></div>
+      </div>
+
+      <!-- Popular Pages -->
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl">
+        <h2 class="text-xl font-black mb-4 uppercase">Popular Pages</h2>
+        <div class="space-y-2" id="popular-pages"></div>
+      </div>
+    </div>
+
+    <div id="error" class="hidden text-center py-20">
+      <div class="text-red-500 text-6xl mb-4">⚠️</div>
+      <p class="text-slate-400 mb-2">Failed to load analytics</p>
+      <p class="text-slate-600 text-sm" id="error-message"></p>
+    </div>
+  </div>
+
+  <script>
+    let currentDays = 7;
+
+    async function loadStats(days) {
+      currentDays = days;
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('stats').classList.add('hidden');
+      document.getElementById('error').classList.add('hidden');
+
+      try {
+        const res = await fetch(`/api/analytics/summary?days=${days}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+
+        // Update overview cards
+        document.getElementById('stat-pageviews').textContent = (data.overview.pageViews || 0).toLocaleString();
+        document.getElementById('stat-visitors').textContent = (data.overview.uniqueVisitors || 0).toLocaleString();
+        document.getElementById('stat-molecules').textContent = (data.featureUsage.molecule_builder || 0).toLocaleString();
+        document.getElementById('stat-vsepr').textContent = (data.featureUsage.vsepr_calculator || 0).toLocaleString();
+
+        // Feature usage bars
+        const features = [
+          { name: 'Periodic Table', count: data.featureUsage.periodic_table || 0, color: 'bg-blue-500' },
+          { name: 'Molecule Builder', count: data.featureUsage.molecule_builder || 0, color: 'bg-emerald-500' },
+          { name: 'VSEPR Calculator', count: data.featureUsage.vsepr_calculator || 0, color: 'bg-purple-500' }
+        ];
+        const maxFeature = Math.max(...features.map(f => f.count), 1);
+        document.getElementById('feature-usage').innerHTML = features.map(f => `
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-bold text-slate-400">${f.name}</span>
+              <span class="text-sm font-bold">${f.count.toLocaleString()}</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2">
+              <div class="${f.color} h-2 rounded-full" style="width: ${(f.count / maxFeature) * 100}%"></div>
+            </div>
+          </div>
+        `).join('');
+
+        // Event types
+        const maxEvent = Math.max(...data.eventTypes.map(e => parseInt(e.count)), 1);
+        document.getElementById('event-types').innerHTML = data.eventTypes.map(e => `
+          <div class="flex justify-between items-center bg-slate-800 p-3 rounded-lg">
+            <span class="font-mono text-sm text-blue-400">${e.event_type}</span>
+            <div class="flex items-center gap-3">
+              <div class="w-32 bg-slate-700 rounded-full h-1.5">
+                <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${(parseInt(e.count) / maxEvent) * 100}%"></div>
+              </div>
+              <span class="font-bold text-white w-16 text-right">${parseInt(e.count).toLocaleString()}</span>
+            </div>
+          </div>
+        `).join('') || '<div class="text-slate-600 text-sm italic">No events yet</div>';
+
+        // Popular pages
+        document.getElementById('popular-pages').innerHTML = data.popularPages.map((p, i) => `
+          <div class="flex justify-between items-center bg-slate-800 p-3 rounded-lg">
+            <div class="flex items-center gap-3">
+              <span class="text-blue-400 font-black text-lg">${i + 1}</span>
+              <span class="font-mono text-sm">${p.page_path}</span>
+            </div>
+            <span class="font-bold">${parseInt(p.views).toLocaleString()} views</span>
+          </div>
+        `).join('') || '<div class="text-slate-600 text-sm italic">No page views yet</div>';
+
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('stats').classList.remove('hidden');
+      } catch (err) {
+        console.error('Analytics load error:', err);
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('error').classList.remove('hidden');
+        document.getElementById('error-message').textContent = err.message;
+      }
+    }
+
+    // Load 7-day stats by default
+    loadStats(7);
+  </script>
+</body>
+</html>
