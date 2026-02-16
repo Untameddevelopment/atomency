@@ -117,10 +117,6 @@
                     <span class="material-icons-round text-lg">info</span>
                     <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">About</span>
                 </button>
-                <button onclick="showPage('privacy')" class="sidebar-btn w-full flex items-center p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400">
-                    <span class="material-icons-round text-lg">policy</span>
-                    <span class="ml-4 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Privacy</span>
-                </button>
             </div>
         </aside>
 
@@ -1105,173 +1101,6 @@
                 </div>
             </main>
 
-            <!-- PRIVACY POLICY PAGE -->
-            <main id="privacy-page" class="fixed inset-0 z-[60] overflow-y-auto hidden sidebar-margin-transition" style="background: linear-gradient(180deg, #050a14 0%, #0a1628 100%); margin-left: 4rem;">
-                <div class="max-w-3xl mx-auto px-6 py-12 pb-20">
-
-                    <!-- Header -->
-                    <div class="text-center mb-12">
-                        <div class="inline-flex items-center gap-3 mb-4">
-                            <div class="bg-primary p-3 rounded-2xl">
-                                <span class="material-icons-round text-white text-3xl">policy</span>
-                            </div>
-                            <h1 class="text-4xl font-black tracking-tight">Privacy Policy</h1>
-                        </div>
-                        <p class="text-slate-500 text-sm">Effective Date: February 16, 2026</p>
-                    </div>
-
-                    <div class="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-8 space-y-8 text-slate-300 leading-relaxed">
-
-                        <p>Atomency ("we," "our," or "us") is committed to protecting the privacy of students, teachers, and educational institutions. This Privacy Policy explains how we collect, use, disclose, and safeguard information in connection with our educational chemistry platform.</p>
-
-                        <!-- FERPA Compliance -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-indigo-400 text-lg">gavel</span>
-                                1. FERPA Compliance
-                            </h2>
-                            <p class="mb-3">Atomency operates in compliance with the Family Educational Rights and Privacy Act (20 U.S.C. § 1232g; 34 CFR Part 99). We do not collect, maintain, or disclose student education records as defined by FERPA.</p>
-                            <p>Our platform does not require student login, store personal information, or track individual activity. No student personally identifiable information (PII) is collected or stored.</p>
-                        </div>
-
-                        <!-- Information We Do Not Collect -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-red-400 text-lg">block</span>
-                                2. Information We Do Not Collect
-                            </h2>
-                            <p class="mb-3">We explicitly do NOT collect:</p>
-                            <ul class="list-disc list-inside space-y-1.5 ml-2 text-slate-400">
-                                <li>Student names or identification numbers</li>
-                                <li>Home or email addresses</li>
-                                <li>Phone numbers</li>
-                                <li>Grades, test scores, or academic records</li>
-                                <li>Behavioral records or disciplinary information</li>
-                                <li>IP addresses linked to specific user sessions</li>
-                                <li>Cookies for individual identification purposes</li>
-                                <li>Any data that could identify an individual student</li>
-                            </ul>
-                        </div>
-
-                        <!-- Limited Data Collection -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-emerald-400 text-lg">analytics</span>
-                                3. Limited Data Collection
-                            </h2>
-                            <p class="mb-3">Atomency operates as a serverless static application. We collect only anonymous aggregate data such as:</p>
-                            <ul class="list-disc list-inside space-y-1.5 ml-2 text-slate-400 mb-3">
-                                <li>Total page views (no user identifiers)</li>
-                                <li>General feature usage statistics</li>
-                                <li>Technical performance metrics</li>
-                            </ul>
-                            <p>This data is used solely for technical maintenance and platform improvement. No individual user activity is tracked or stored.</p>
-                        </div>
-
-                        <!-- Local Storage -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-amber-400 text-lg">storage</span>
-                                4. Local Storage
-                            </h2>
-                            <p class="mb-3">All user-generated content is stored exclusively in the user's browser localStorage. This includes:</p>
-                            <ul class="list-disc list-inside space-y-1.5 ml-2 text-slate-400 mb-3">
-                                <li>Molecular structures created in the simulator</li>
-                                <li>Exported molecule files</li>
-                                <li>User preferences and settings</li>
-                            </ul>
-                            <p>We cannot access, retrieve, or view any data stored in your browser's localStorage. This data remains on your device and is never transmitted to our servers.</p>
-                        </div>
-
-                        <!-- Third-Party Services -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-blue-400 text-lg">cloud_queue</span>
-                                5. Third-Party Services
-                            </h2>
-                            <p class="mb-3">Atomency integrates with the following third-party services:</p>
-                            <ul class="list-disc list-inside space-y-1.5 ml-2 text-slate-400 mb-3">
-                                <li><strong>Netlify:</strong> Web hosting and deployment. Netlify may collect standard server logs for technical purposes only.</li>
-                                <li><strong>PubChem PUG REST API:</strong> Used for compound lookup and chemical data enrichment. API requests do not include user identifiers.</li>
-                            </ul>
-                            <p>No third-party analytics (Google Analytics, etc.) or advertising services are integrated into Atomency.</p>
-                        </div>
-
-                        <!-- Data Security -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-purple-400 text-lg">security</span>
-                                6. Data Security
-                            </h2>
-                            <p>Since Atomency does not collect or store personal user data, there is minimal security risk. However, we implement industry-standard security practices for our hosting infrastructure, including HTTPS encryption and secure deployment protocols.</p>
-                        </div>
-
-                        <!-- Children's Privacy (COPPA) -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-pink-400 text-lg">child_care</span>
-                                7. Children's Privacy (COPPA)
-                            </h2>
-                            <p>Atomency is designed for students aged 13 and above in alignment with K-12 educational standards. We do not knowingly collect personal information from children under 13. If you believe such data has been collected inadvertently, please contact us immediately at help@atomency.com.</p>
-                        </div>
-
-                        <!-- Your Rights -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-teal-400 text-lg">verified_user</span>
-                                8. Your Rights
-                            </h2>
-                            <p>Since we do not collect personal information, there is no user data to access, modify, or delete. Any data stored in your browser's localStorage is entirely under your control and can be cleared at any time through your browser settings.</p>
-                        </div>
-
-                        <!-- Cookies and Tracking -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-orange-400 text-lg">cookie</span>
-                                9. Cookies and Tracking
-                            </h2>
-                            <p>Atomency does not use tracking cookies or any similar tracking technologies. Cookies used by the platform are strictly functional (e.g., maintaining session state for the application) and do not collect or transmit personal information.</p>
-                        </div>
-
-                        <!-- International Data Transfers -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-cyan-400 text-lg">public</span>
-                                10. International Data Transfers
-                            </h2>
-                            <p>Since Atomency does not collect personal user data, there are no international data transfers of personal information. The platform operates as a static application delivered via Content Delivery Network (CDN).</p>
-                        </div>
-
-                        <!-- Updates to This Policy -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-violet-400 text-lg">update</span>
-                                11. Updates to This Policy
-                            </h2>
-                            <p>We may update this Privacy Policy from time to time to reflect changes in our practices, legal requirements, or for other operational reasons. We will notify users of any material changes by posting the updated policy on this page with a revised "Effective Date."</p>
-                        </div>
-
-                        <!-- Contact Information -->
-                        <div>
-                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="material-icons-round text-indigo-400 text-lg">mail</span>
-                                12. Contact Information
-                            </h2>
-                            <p class="mb-3">If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact:</p>
-                            <p class="text-white font-medium">Ky'Lin Spears<br>
-                            Developer, Atomency<br>
-                            <a href="mailto:help@atomency.com" class="text-indigo-400 hover:text-indigo-300 underline underline-offset-4">help@atomency.com</a></p>
-                        </div>
-
-                        <!-- Footer notice -->
-                        <div class="pt-6 border-t border-slate-700/50 text-center text-slate-500 text-sm">
-                            &copy; 2026 Ky'Lin Spears. All rights reserved.
-                        </div>
-                    </div>
-                </div>
-            </main>
-
-
     <!-- Inspector/Settings Panel (Floating) -->
     <div id="settings-panel" class="fixed bottom-20 right-4 z-50 w-64 bg-slate-900/90 border border-slate-700 rounded-xl p-4 backdrop-blur shadow-2xl hidden">
         <div class="flex justify-between items-center mb-4">
@@ -1307,7 +1136,6 @@
             document.getElementById('nuclear-page').classList.toggle('hidden', page !== 'nuclear');
             document.getElementById('analysis-page').classList.toggle('hidden', page !== 'analysis');
             document.getElementById('about-page').classList.toggle('hidden', page !== 'about');
-            document.getElementById('privacy-page').classList.toggle('hidden', page !== 'privacy');
             document.getElementById('terms-page').classList.toggle('hidden', page !== 'terms');
             document.getElementById('top-nav-home').classList.toggle('hidden', page !== 'home');
 
@@ -1351,20 +1179,23 @@
                 navBtns[navIdx].classList.add('bg-primary/10', 'text-primary');
                 navBtns[navIdx].classList.remove('text-slate-400');
             }
-            // Bottom: About=0, Privacy=1
+            // Bottom: About=0
             if (page === 'about' && bottomBtns[0]) {
                 bottomBtns[0].classList.add('bg-primary/10', 'text-primary');
                 bottomBtns[0].classList.remove('text-slate-400');
-            }
-            if (page === 'privacy' && bottomBtns[1]) {
-                bottomBtns[1].classList.add('bg-primary/10', 'text-primary');
-                bottomBtns[1].classList.remove('text-slate-400');
             }
         }
 
         // Analysis page: refresh data from the engine
         function refreshAnalysis() {
             if (typeof engine === 'undefined') return;
+
+            // Helper to get atomic mass from element (handles both API and local data formats)
+            const getAtomicMass = (element) => {
+                if (!element) return 0;
+                const mass = element.atomic_mass || element.atomicMass || element.mass || element.number;
+                return parseFloat(mass) || 0;
+            };
 
             const atoms = engine.atoms || [];
             const bonds = engine.bonds || [];
@@ -1375,11 +1206,9 @@
             document.getElementById('analysis-total-bonds').textContent = bonds.length;
             document.getElementById('analysis-total-molecules').textContent = molecules.filter(m => m.atomIds.length > 1).length;
 
-            const totalMass = engine.atoms.reduce((sum, a) => sum + (a.element.atomicMass || a.element.atomic_mass || 0), 0);
-            const totalCharge = engine.atoms.reduce((sum, a) => sum + (a.formalCharge || 0), 0);
+            const totalMass = engine.atoms.reduce((sum, a) => sum + (getAtomicMass(a.element)), 0);
             
             document.getElementById('analysis-total-mass').textContent = totalMass.toFixed(2);
-            document.getElementById('analysis-total-charge').textContent = (totalCharge > 0 ? '+' : '') + totalCharge;
 
             // Environment
             document.getElementById('analysis-temperature').textContent = (engine.temperature || 298) + ' K';
@@ -1393,7 +1222,7 @@
             } else {
                 molList.innerHTML = multiAtomMols.map(mol => {
                     const molAtoms = mol.atomIds.map(id => atoms.find(a => a.id === id)).filter(Boolean);
-                    const mass = molAtoms.reduce((s, a) => s + (a.element?.atomicMass || 0), 0);
+                    const mass = molAtoms.reduce((s, a) => s + (getAtomicMass(a.element)), 0);
                     const stabilityColor = mol.stability >= 70 ? 'text-emerald-400' : mol.stability >= 40 ? 'text-amber-400' : 'text-rose-400';
                     const stabilityBarColor = mol.stability >= 70 ? 'bg-emerald-500' : mol.stability >= 40 ? 'bg-amber-500' : 'bg-rose-500';
                     const stateColor = mol.stateOfMatter === 'Gas' ? 'text-emerald-400' : mol.stateOfMatter === 'Liquid' ? 'text-blue-400' : mol.stateOfMatter === 'Solid' ? 'text-slate-300' : 'text-slate-400';

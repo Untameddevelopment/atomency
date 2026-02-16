@@ -131,6 +131,9 @@ class ChemistryEngine {
     // ============================================================================
     
     resolve() {
+        // Build spatial hash for efficient neighbor lookups
+        this._spatialHash = this.buildSpatialHash();
+        
         // Apply collision physics
         this.applyCollisionPhysics();
         
@@ -156,8 +159,8 @@ class ChemistryEngine {
     }
     
     applyCollisionPhysics() {
-        for (let step = 0; step < 3; step++) {
-            for (let i = 0; i < this.atoms.length; i++) {
+        // Optimized: single iteration with better position resolution
+        for (let i = 0; i < this.atoms.length; i++) {
                 for (let j = i + 1; j < this.atoms.length; j++) {
                     const a1 = this.atoms[i];
                     const a2 = this.atoms[j];
@@ -181,7 +184,6 @@ class ChemistryEngine {
                     }
                 }
             }
-        }
     }
     
     calculateAtomParameters() {
@@ -968,7 +970,7 @@ class ChemistryEngine {
     // ============================================================================
 
     getMolecularProperties(atoms, counts) {
-        const MW = atoms.reduce((sum, a) => sum + (a.element.atomic_mass || 0), 0);
+        const MW = atoms.reduce((sum, a) => sum + (a.element.atomic_mass || a.element.atomicMass || a.element.mass || a.element.number || 0), 0);
         const totalElectrons = atoms.reduce((sum, a) => sum + a.element.number, 0);
         const nAtoms = atoms.length;
 

@@ -21,6 +21,16 @@ let selectedAtomId = null;
 let _vsepAnimId = null;
 let _vsepAnimFrames = 0;
 let _prevBondCount = 0;
+let _vsepDebounceTimer = null;
+
+// Performance optimization: throttle updateScene calls
+let _updateThrottleTimer = null;
+let _pendingUpdate = false;
+let _lastUpdateTime = 0;
+const UPDATE_THROTTLE_MS = 16; // ~60fps max
+
+// Cache for expensive calculations
+const _massCache = new Map();
 
 // Pan and Zoom State
 let viewState = {
@@ -90,6 +100,21 @@ async function initApp() {
 }
 
 function updateScene(fullRender = false) {
+    // Throttle updates during dragging for performance
+    const now = performance.now();
+    if (!fullRender && now - _lastUpdateTime < UPDATE_THROTTLE_MS) {
+        if (!_pendingUpdate) {
+            _pendingUpdate = true;
+            _updateThrottleTimer = setTimeout(() => {
+                _pendingUpdate = false;
+                updateScene(fullRender);
+            }, UPDATE_THROTTLE_MS);
+        }
+        return;
+    }
+    _lastUpdateTime = now;
+    _pendingUpdate = false;
+    
     engine.resolve();
 
     // VSEPR Physics — move atoms toward correct molecular geometry
@@ -187,10 +212,14 @@ function updateScene(fullRender = false) {
     renderVSEPROverlay();
     updateInspector();
 
-    // Auto-trigger VSEPR convergence when bonds change
+    // Auto-trigger VSEPR convergence when bonds change (debounced)
     if (engine.bonds.length !== _prevBondCount && engine.bonds.length > 0) {
         _prevBondCount = engine.bonds.length;
-        startVSEPRAnimation();
+        // Debounce to prevent rapid re-triggering
+        if (_vsepDebounceTimer) clearTimeout(_vsepDebounceTimer);
+        _vsepDebounceTimer = setTimeout(() => {
+            startVSEPRAnimation();
+        }, 100);
     }
 
     const atomStat = document.getElementById('stat-atoms');
@@ -1144,6 +1173,15 @@ function handleMove(e) {
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
+
+    // Skip updates if mouse hasn't moved significantly (reduces CPU)
+    if (draggingAtom && window._lastMouseX !== undefined) {
+        const dx = mouseX - window._lastMouseX;
+        const dy = mouseY - window._lastMouseY;
+        if (dx * dx + dy * dy < 4) return; // Skip if moved less than 2 pixels
+    }
+    window._lastMouseX = mouseX;
+    window._lastMouseY = mouseY;
 
     if (viewState.isPanning) {
         const dx = e.clientX - viewState.lastMouse.x;
