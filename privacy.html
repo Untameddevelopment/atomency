@@ -6,88 +6,259 @@
     <title>Privacy Policy - Atomency</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #050a14; color: #cbd5e1; }
-        .hud-blur { backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.7); }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #050a14 0%, #0f172a 50%, #050a14 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+            color: #cbd5e1;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hud-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%
+            );
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .btn-shine:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+
+        .section-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
     </style>
 </head>
 <body class="antialiased">
-    <div class="max-w-4xl mx-auto px-6 py-12">
-        <div class="mb-12 flex items-center gap-4">
-            <a href="index.html" class="bg-indigo-600 p-2 rounded-lg hover:bg-indigo-500 transition-colors">
-                <span class="material-icons-round text-white">arrow_back</span>
+    <div class="max-w-4xl mx-auto px-6 py-16">
+        <!-- Header -->
+        <div class="mb-16">
+            <a href="landing.html" class="inline-flex items-center gap-3 mb-8 group">
+                <div class="btn-shine bg-gradient-to-r from-indigo-600 to-purple-600 p-3 rounded-xl hover:from-indigo-500 hover:to-purple-500 transition-all transform group-hover:-translate-x-2 shadow-lg shadow-indigo-500/30">
+                    <span class="material-icons-round text-white">arrow_back</span>
+                </div>
             </a>
-            <h1 class="text-4xl font-black text-white tracking-tight">Privacy Policy</h1>
+
+            <div class="flex items-center gap-4 mb-6">
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-500 p-3 rounded-xl">
+                    <span class="material-icons-round text-white text-3xl">policy</span>
+                </div>
+                <div>
+                    <p class="text-slate-400 text-sm font-medium mb-1">Legal</p>
+                    <h1 class="text-4xl md:text-5xl font-black text-gradient">Privacy Policy</h1>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border border-slate-700/50 inline-block">
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                    <span class="text-slate-400">Last Updated: <span class="text-white font-semibold">February 15, 2026</span></span>
+                </div>
+            </div>
         </div>
 
-        <div class="space-y-8 leading-relaxed">
-            <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
-                <p class="mb-4">Effective Date: February 15, 2026</p>
-                <p>Atomency ("we," "our," or "us") is committed to protecting the privacy of students, teachers, and educational institutions. This Privacy Policy explains how we collect, use, disclose, and safeguard information in connection with our educational chemistry platform.</p>
+        <!-- Intro Section -->
+        <section class="glass rounded-3xl p-8 md:p-10 border border-slate-700/50 mb-8 section-card">
+            <div class="flex items-start gap-6">
+                <div class="hidden md:flex w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl items-center justify-center flex-shrink-0 border border-indigo-500/30">
+                    <span class="material-icons-round text-indigo-400 text-3xl">security</span>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-4">Your Privacy Matters</h2>
+                    <p class="text-slate-300 leading-relaxed">
+                        Atomency ("we," "our," or "us") is committed to protecting the privacy of students, teachers, and educational institutions. This Privacy Policy explains how we collect, use, disclose, and safeguard information in connection with our educational chemistry platform.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Privacy Sections -->
+        <div class="space-y-6">
+            <!-- FERPA Compliance -->
+            <section class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 section-card">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500/20 to-indigo-600/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-indigo-500/30">
+                        <span class="material-icons-round text-indigo-400 text-xl">gavel</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-3">1. FERPA COMPLIANCE</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            Atomency operates in compliance with the Family Educational Rights and Privacy Act (20 U.S.C. § 1232g; 34 CFR Part 99). We do not collect, maintain, or disclose student education records as defined by FERPA. Our platform does not require student login, store personal information, or track individual activity.
+                        </p>
+                    </div>
+                </div>
             </section>
 
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="material-icons-round text-indigo-400">gavel</span>
-                    1. FERPA COMPLIANCE
-                </h2>
-                <p>Atomency operates in compliance with the Family Educational Rights and Privacy Act (20 U.S.C. § 1232g; 34 CFR Part 99). We do not collect, maintain, or disclose student education records as defined by FERPA. Our platform does not require student login, store personal information, or track individual activity.</p>
+            <!-- Information Not Collected -->
+            <section class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 section-card">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-rose-500/20 to-rose-600/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-rose-500/30">
+                        <span class="material-icons-round text-rose-400 text-xl">block</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-3">2. INFORMATION WE DO NOT COLLECT</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            We explicitly do NOT collect student names, addresses, IDs, grades, behavioral records, IP addresses linked to specific sessions, or cookies for individual identification.
+                        </p>
+                    </div>
+                </div>
             </section>
 
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="material-icons-round text-rose-400">block</span>
-                    2. INFORMATION WE DO NOT COLLECT
-                </h2>
-                <p>We explicitly do NOT collect student names, addresses, IDs, grades, behavioral records, IP addresses linked to specific sessions, or cookies for individual identification.</p>
+            <!-- Limited Data Collection -->
+            <section class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 section-card">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-emerald-500/30">
+                        <span class="material-icons-round text-emerald-400 text-xl">analytics</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-3">3. LIMITED DATA COLLECTION</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            Atomency operates as a serverless static application. We collect only anonymous aggregate data such as total page views and general feature usage statistics for technical maintenance and platform improvement.
+                        </p>
+                    </div>
+                </div>
             </section>
 
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="material-icons-round text-emerald-400">analytics</span>
-                    3. LIMITED DATA COLLECTION
-                </h2>
-                <p>Atomency operates as a serverless static application. We collect only anonymous aggregate data such as total page views and general feature usage statistics for technical maintenance and platform improvement.</p>
+            <!-- Local Storage -->
+            <section class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 section-card">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-amber-500/20 to-amber-600/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-amber-500/30">
+                        <span class="material-icons-round text-amber-400 text-xl">storage</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-3">4. LOCAL STORAGE</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            All user-generated content (molecular structures, exported files) is stored exclusively in the user's browser localStorage. We cannot access or retrieve this data.
+                        </p>
+                    </div>
+                </div>
             </section>
 
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="material-icons-round text-amber-400">storage</span>
-                    4. LOCAL STORAGE
-                </h2>
-                <p>All user-generated content (molecular structures, exported files) is stored exclusively in the user's browser localStorage. We cannot access or retrieve this data.</p>
+            <!-- Third-Party Services -->
+            <section class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 section-card">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-blue-500/30">
+                        <span class="material-icons-round text-blue-400 text-xl">cloud_queue</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-3">5. THIRD-PARTY SERVICES</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            Atomency is hosted on Netlify. Netlify may collect standard server logs. No other third-party analytics or advertising services are used.
+                        </p>
+                    </div>
+                </div>
             </section>
 
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="material-icons-round text-blue-400">cloud_queue</span>
-                    5. THIRD-PARTY SERVICES
-                </h2>
-                <p>Atomency is hosted on Netlify. Netlify may collect standard server logs. No other third-party analytics or advertising services are used.</p>
+            <!-- Children's Privacy -->
+            <section class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 section-card">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-purple-500/30">
+                        <span class="material-icons-round text-purple-400 text-xl">child_care</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-3">6. CHILDREN'S PRIVACY (COPPA)</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            Designed for students 13+, we do not knowingly collect personal information from children under 13. Contact us immediately if you believe such data was collected.
+                        </p>
+                    </div>
+                </div>
             </section>
 
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="material-icons-round text-indigo-400">child_care</span>
-                    7. CHILDREN'S PRIVACY (COPPA)
-                </h2>
-                <p>Designed for students 13+, we do not knowingly collect personal information from children under 13. Contact us immediately if you believe such data was collected.</p>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="material-icons-round text-indigo-400">mail</span>
-                    11. CONTACT INFORMATION
-                </h2>
-                <p>Ky'Lin Spears, Developer, Atomency<br>
-                <a href="mailto:help@atomency.com" class="text-indigo-400 hover:underline">help@atomency.com</a></p>
+            <!-- Contact Information -->
+            <section class="glass rounded-2xl p-6 md:p-8 border border-slate-700/50 section-card">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-indigo-500/30">
+                        <span class="material-icons-round text-indigo-400 text-xl">mail</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-3">7. CONTACT INFORMATION</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            Ky'Lin Spears, Developer, Atomency<br>
+                            <a href="mailto:help@atomency.com" class="text-indigo-400 hover:text-indigo-300 transition-colors font-medium">help@atomency.com</a>
+                        </p>
+                    </div>
+                </div>
             </section>
         </div>
-        
-        <footer class="mt-20 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
-            &copy; 2026 Ky'Lin Spears. All rights reserved.
+
+        <!-- Footer -->
+        <footer class="mt-20 pt-12 border-t border-slate-800/50">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-indigo-500 to-purple-500 p-2 rounded-lg">
+                        <span class="material-icons-round text-white text-lg">science</span>
+                    </div>
+                    <span class="font-extrabold text-xl tracking-tighter italic uppercase text-white">Atom<span class="text-indigo-400">ency</span></span>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-slate-500 text-sm">&copy; 2026 Ky'Lin Spears. All rights reserved.</p>
+                </div>
+            </div>
         </footer>
     </div>
+
+    <script>
+        // Smooth scroll and animation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.section-card');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, 100 + (index * 100));
+            });
+        });
+    </script>
 </body>
 </html>
